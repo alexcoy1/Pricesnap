@@ -62,11 +62,11 @@ const EXPECTED = {
     'SpaBoy Starter Kit (Spa)',
   ],
   'summit signature with grey cover': [
-    'Custom - Summit XL Signtaure',
+    'Summit XL Signature',
     'Custom - Summit XL Cover',
   ],
   'arctic fox prestige with cover and onzen': [
-    'Custom - Arctic Fox Prestige',
+    'Arctic Fox Prestige',
     'Custom - Fox Mylovac Cover',
     'Custom - Onzen',
   ],

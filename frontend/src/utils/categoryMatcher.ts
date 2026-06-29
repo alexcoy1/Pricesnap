@@ -63,8 +63,17 @@ export function extractContext(itemName) {
   }
 
   const lower = itemName.toLowerCase();
+  if (!ctx.series) {
+    if (/^cub\b|^(summit xl|arctic fox)\b/i.test(itemName)) ctx.series = 'Custom';
+    else if (/^(ocean|columbia|okanagan|polar bear|athabascan|hudson|kingfisher|wolverine)\b/i.test(itemName)) ctx.series = 'AWP';
+    else if (/^(nova|lunar)\b|^classic prestige|^classic signature|^timberwolf/i.test(itemName)) {
+      ctx.series = /^classic|^timberwolf/i.test(itemName) ? 'Classic' : 'Core';
+    }
+  }
+
   if (/summit\s*xl/i.test(lower)) ctx.model = 'summit_xl';
   else if (/arctic\s*fox|\bfox\b/i.test(lower)) ctx.model = 'fox';
+  else if (/\bcub\b/i.test(lower)) ctx.model = 'cub';
   else if (/\b7\s*'?ft\b|prestige\s*7|signature\s*7/i.test(lower)) ctx.size = '7';
   else if (/\b8\s*'?ft\b|prestige\s*8|signature\s*8|legend\s*select\s*8|select\s*8/i.test(lower)) ctx.size = '8';
 
@@ -157,24 +166,29 @@ export function ruleBasedMatch(segment, priceList, context, usedItems) {
     }
   }
 
-  // --- CUB (Custom series 7' compact spa) ---
+  // --- CUB (Custom series compact spa) ---
   if (/\bcub\b/i.test(t)) {
-    if (/prestige/i.test(t)) {
-      const m = findItemFuzzy(/Cub.*Prestige/i, priceList, usedItems, 'Custom')
-        || findItem('Custom - Prestige 7\'', priceList, usedItems);
+    if (/legend\s*select/i.test(t)) {
+      const m = findItem('Cub Legend Select 8\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
-    if (/legend/i.test(t) && !/legend\s*select/i.test(t)) {
-      const m = findItemFuzzy(/Cub.*Legend/i, priceList, usedItems, 'Custom');
+    if (/prestige/i.test(t) && /\b8\b|8\s*'?ft/i.test(t)) {
+      const m = findItem('Cub Prestige 8\'', priceList, usedItems);
+      if (m) return { ...m, Quantity: quantity };
+    }
+    if (/prestige/i.test(t)) {
+      const m = findItem('Cub Prestige 7\'', priceList, usedItems);
+      if (m) return { ...m, Quantity: quantity };
+    }
+    if (/signature/i.test(t) && /\b8\b|8\s*'?ft/i.test(t)) {
+      const m = findItem('Cub Signature 8\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
     if (/sig/i.test(t)) {
-      const m = findItemFuzzy(/Cub.*Signature/i, priceList, usedItems, 'Custom')
-        || findItem('Custom - Signature 7\'', priceList, usedItems);
+      const m = findItem('Cub Signature 7\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
-    const m = findItemFuzzy(/Cub/i, priceList, usedItems, 'Custom')
-      || findItem('Custom - Signature 7\'', priceList, usedItems);
+    const m = findItemFuzzy(/^Cub /i, priceList, usedItems);
     if (m) return { ...m, Quantity: quantity };
   }
 
@@ -240,58 +254,56 @@ export function ruleBasedMatch(segment, priceList, context, usedItems) {
   if (!series || series === 'Custom') {
     if (/summit/i.test(t)) {
       if (/legend\s*select/i.test(t)) {
-        const m = findItem('Custom - Summit XL Legend Select', priceList, usedItems);
+        const m = findItem('Summit XL Legend Select', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/signature|signtaure/i.test(t)) {
-        const m = findItem('Custom - Summit XL Signtaure', priceList, usedItems);
+        const m = findItem('Summit XL Signature', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/prestige/i.test(t)) {
-        const m = findItem('Custom - Summit XL Prestige', priceList, usedItems);
+        const m = findItem('Summit XL Prestige', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
-      const m = findItemFuzzy(/Summit XL (Prestige|Signtaure|Signature|Legend)/i, priceList, usedItems, 'Custom');
+      const m = findItemFuzzy(/^Summit XL /i, priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
 
     if (/arctic\s*fox|\bfox\b/i.test(t)) {
       if (/signature/i.test(t)) {
-        const m = findItem('Custom - Arctic Fox Signature', priceList, usedItems);
+        const m = findItem('Arctic Fox Signature', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/prestige/i.test(t)) {
-        const m = findItem('Custom - Arctic Fox Prestige', priceList, usedItems);
+        const m = findItem('Arctic Fox Prestige', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
     }
 
     if (/legend\s*select/i.test(t) && /\b8\b|8\s*'?ft/i.test(t)) {
-      const m = findItem('Custom - Legend Select 8\'', priceList, usedItems)
-        || findItem('Custom - Select 8\'', priceList, usedItems);
+      const m = findItem('Cub Legend Select 8\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
 
     if (/signature/i.test(t) && /\b8\b|8\s*'?ft/i.test(t)) {
-      const m = findItem('Custom - Signature 8\'', priceList, usedItems);
+      const m = findItem('Cub Signature 8\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
     if (/signature/i.test(t) && /\b7\b|7\s*'?ft/i.test(t)) {
-      const m = findItem('Custom - Signature 7\'', priceList, usedItems);
+      const m = findItem('Cub Signature 7\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
     if (/prestige/i.test(t) && /\b8\b|8\s*'?ft/i.test(t)) {
-      const m = findItem('Custom - Prestige 8\'', priceList, usedItems);
+      const m = findItem('Cub Prestige 8\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
     if (/prestige/i.test(t) && /\b7\b|7\s*'?ft/i.test(t)) {
-      const m = findItem('Custom - Prestige 7\'', priceList, usedItems);
+      const m = findItem('Cub Prestige 7\'', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
 
-    // "signature" alone with custom context from prior match
     if (/signature|signtaure/i.test(t) && context.model === 'summit_xl') {
-      const m = findItem('Custom - Summit XL Signtaure', priceList, usedItems);
+      const m = findItem('Summit XL Signature', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
   }
@@ -300,31 +312,31 @@ export function ruleBasedMatch(segment, priceList, context, usedItems) {
   if (series === 'Classic') {
     if (/timberwolf|whistler/i.test(t)) {
       if (/signature/i.test(t)) {
-        const m = findItem('Classic - Timberwolf/Whistler Signature', priceList, usedItems);
+        const m = findItem('Timberwolf/Whistler Signature', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/prestige/i.test(t)) {
-        const m = findItem('Classic - Timberwolf/Whistler Prestige', priceList, usedItems);
+        const m = findItem('Timberwolf/Whistler Prestige', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
     }
     if (/\b7\b|7\s*ft/i.test(t)) {
       if (/signature/i.test(t)) {
-        const m = findItem('Classic - 7 ft Classic - Signature', priceList, usedItems);
+        const m = findItem('Classic Signature 7\'', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/prestige/i.test(t)) {
-        const m = findItem('Classic - 7 ft Classic - Prestige', priceList, usedItems);
+        const m = findItem('Classic Prestige 7\'', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
     }
     if (/\b8\b|8\s*ft/i.test(t)) {
       if (/signature/i.test(t)) {
-        const m = findItem('Classic - 8 ft Classic - Signature', priceList, usedItems);
+        const m = findItem('Classic Signature 8\'', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/prestige/i.test(t)) {
-        const m = findItem('Classic - 8 ft Classic - Prestige', priceList, usedItems);
+        const m = findItem('Classic Prestige 8\'', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
     }
@@ -334,21 +346,21 @@ export function ruleBasedMatch(segment, priceList, context, usedItems) {
   if (series === 'Core') {
     if (/lunar|orion/i.test(t)) {
       if (/signature/i.test(t)) {
-        const m = findItem('Core - Lunar/Orion - Signature', priceList, usedItems);
+        const m = findItem('Lunar Orion Signature', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/prestige/i.test(t)) {
-        const m = findItem('Core - Lunar/ Orion - Prestige', priceList, usedItems);
+        const m = findItem('Lunar Orion Prestige', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
     }
     if (/nova/i.test(t)) {
       if (/signature/i.test(t)) {
-        const m = findItem('Core - Nova Signature', priceList, usedItems);
+        const m = findItem('Nova Signature', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
       if (/prestige/i.test(t)) {
-        const m = findItem('Core - Nova Prestige', priceList, usedItems);
+        const m = findItem('Nova Prestige', priceList, usedItems);
         if (m) return { ...m, Quantity: quantity };
       }
     }
@@ -360,25 +372,25 @@ export function ruleBasedMatch(segment, priceList, context, usedItems) {
     for (const model of models) {
       if (new RegExp(model, 'i').test(t)) {
         if (/legend\s*select/i.test(t)) {
-          const m = findItem(`AWP - ${model} Legend Select`, priceList, usedItems);
+          const m = findItem(`${model} Legend Select`, priceList, usedItems);
           if (m) return { ...m, Quantity: quantity };
         }
         if (/\blegend\b/i.test(t)) {
-          const m = findItem(`AWP - ${model} Legend`, priceList, usedItems);
+          const m = findItem(`${model} Legend`, priceList, usedItems);
           if (m) return { ...m, Quantity: quantity };
         }
         if (/signature/i.test(t)) {
-          const m = findItem(`AWP - ${model} Signature`, priceList, usedItems);
+          const m = findItem(`${model} Signature`, priceList, usedItems);
           if (m) return { ...m, Quantity: quantity };
         }
         if (/prestige/i.test(t)) {
-          const m = findItem(`AWP - ${model} Prestige`, priceList, usedItems);
+          const m = findItem(`${model} Prestige`, priceList, usedItems);
           if (m) return { ...m, Quantity: quantity };
         }
       }
     }
     if (/athabascan/i.test(t)) {
-      const m = findItem('AWP - Athabascan', priceList, usedItems);
+      const m = findItem('Athabascan', priceList, usedItems);
       if (m) return { ...m, Quantity: quantity };
     }
   }

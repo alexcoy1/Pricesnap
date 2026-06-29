@@ -1,22 +1,1617 @@
 [
-  {"Item": "Widget Pro - Standard", "Price": 1299, "Cost": 650},
-  {"Item": "Widget Pro - Premium", "Price": 1899, "Cost": 950},
-  {"Item": "Widget Starter Kit", "Price": 149, "Cost": 75},
-  {"Item": "Service Plan - Annual", "Price": 499, "Cost": 200},
-  {"Item": "Installation - Standard", "Price": 799, "Cost": 400},
-  {"Item": "Installation - Priority", "Price": 1299, "Cost": 600},
-  {"Item": "Extended Warranty - 2 Year", "Price": 299, "Cost": 120},
-  {"Item": "Extended Warranty - 3 Year", "Price": 449, "Cost": 180},
-  {"Item": "Training Package - On-site", "Price": 2500, "Cost": 1200},
-  {"Item": "Training Package - Remote", "Price": 999, "Cost": 400},
-  {"Item": "Accessory Pack - Basic", "Price": 199, "Cost": 80},
-  {"Item": "Accessory Pack - Deluxe", "Price": 449, "Cost": 220},
-  {"Item": "Shipping - Local", "Price": 99, "Cost": 50},
-  {"Item": "Shipping - National", "Price": 249, "Cost": 120},
-  {"Item": "Maintenance Visit - Quarterly", "Price": 349, "Cost": 150},
-  {"Item": "Software License - Single User", "Price": 599, "Cost": 180},
-  {"Item": "Software License - Team (5 seats)", "Price": 2499, "Cost": 900},
-  {"Item": "Consulting - Half Day", "Price": 1500, "Cost": 600},
-  {"Item": "Consulting - Full Day", "Price": 2800, "Cost": 1100},
-  {"Item": "Rush Processing Fee", "Price": 199, "Cost": 50}
+    {
+        "Item":  "AWP - 36\" 3-Tier Cedar",
+        "Price":  749,
+        "Cost":  463
+    },
+    {
+        "Item":  "AWP - 40 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "AWP - 50 - 100km",
+        "Price":  850,
+        "Cost":  250
+    },
+    {
+        "Item":  "AWP - 50 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "AWP - 60 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "AWP - 64\" 3-Tier Cedar",
+        "Price":  1149,
+        "Cost":  708
+    },
+    {
+        "Item":  "AWP - 72\" 3-Tier Cedar",
+        "Price":  1199,
+        "Cost":  710
+    },
+    {
+        "Item":  "AWP - 72\" 4-Tier Cedar",
+        "Price":  1499,
+        "Cost":  1038
+    },
+    {
+        "Item":  "AWP - Additional Assistance (per person)",
+        "Price":  200,
+        "Cost":  200
+    },
+    {
+        "Item":  "AWP - Aquafinesse AWP",
+        "Price":  390,
+        "Cost":  255
+    },
+    {
+        "Item":  "AWP - Aquatremor",
+        "Price":  2980,
+        "Cost":  1434
+    },
+    {
+        "Item":  "Athabascan",
+        "Price":  35000,
+        "Cost":  24301
+    },
+    {
+        "Item":  "AWP - Cabinet Free Cover Shelf with Extender Arms",
+        "Price":  629,
+        "Cost":  358
+    },
+    {
+        "Item":  "AWP - Cabinet Mount Cover Shelf",
+        "Price":  299,
+        "Cost":  182
+    },
+    {
+        "Item":  "Columbia Legend",
+        "Price":  41500,
+        "Cost":  27322
+    },
+    {
+        "Item":  "Columbia Legend Select",
+        "Price":  44250,
+        "Cost":  28411
+    },
+    {
+        "Item":  "Columbia Prestige",
+        "Price":  34275,
+        "Cost":  24561
+    },
+    {
+        "Item":  "Columbia Signature",
+        "Price":  39225,
+        "Cost":  26497
+    },
+    {
+        "Item":  "AWP - Corner Lights",
+        "Price":  850,
+        "Cost":  462
+    },
+    {
+        "Item":  "AWP - Corner Step 2-Tier Cedar",
+        "Price":  799,
+        "Cost":  480
+    },
+    {
+        "Item":  "AWP - Covermate 1 (arctic bracket)",
+        "Price":  449,
+        "Cost":  286
+    },
+    {
+        "Item":  "AWP - DuraStep II Black",
+        "Price":  249,
+        "Cost":  122
+    },
+    {
+        "Item":  "AWP - End 2 End Cover -SPORT",
+        "Price":  8995,
+        "Cost":  6415
+    },
+    {
+        "Item":  "AWP - End 2 End Swivel Cover Shelf",
+        "Price":  399,
+        "Cost":  226
+    },
+    {
+        "Item":  "AWP - Ethernet Over Power",
+        "Price":  289,
+        "Cost":  169
+    },
+    {
+        "Item":  "AWP - Fitness Kit",
+        "Price":  1100,
+        "Cost":  481
+    },
+    {
+        "Item":  "AWP - Graphite Step",
+        "Price":  249,
+        "Cost":  137
+    },
+    {
+        "Item":  "AWP - Handrail - Cabinet Free (arctic)",
+        "Price":  269,
+        "Cost":  167
+    },
+    {
+        "Item":  "Hudson",
+        "Price":  43000,
+        "Cost":  27921
+    },
+    {
+        "Item":  "AWP - Jet Installation",
+        "Price":  225,
+        "Cost":  200
+    },
+    {
+        "Item":  "Kingfisher",
+        "Price":  43000,
+        "Cost":  27921
+    },
+    {
+        "Item":  "AWP - ModStep 4 (SwimSpa Step)",
+        "Price":  1799,
+        "Cost":  1289
+    },
+    {
+        "Item":  "AWP - Niagara Turbo Jet System (POLAR BEAR ONLY)",
+        "Price":  9500,
+        "Cost":  5750
+    },
+    {
+        "Item":  "AWP - NOM Step 2 Tier 64\"",
+        "Price":  929,
+        "Cost":  562
+    },
+    {
+        "Item":  "AWP - NOM Step 2 Tier 72\"",
+        "Price":  999,
+        "Cost":  598
+    },
+    {
+        "Item":  "AWP - NOM Step 3 Tier 64\"",
+        "Price":  1299,
+        "Cost":  809
+    },
+    {
+        "Item":  "AWP - NOM Step 3 Tier 72\"",
+        "Price":  1399,
+        "Cost":  853
+    },
+    {
+        "Item":  "AWP - NOM Step 4 Tier 64\"",
+        "Price":  1599,
+        "Cost":  1029
+    },
+    {
+        "Item":  "AWP - NOM Step 4 Tier 72\"",
+        "Price":  1799,
+        "Cost":  1083
+    },
+    {
+        "Item":  "Ocean Legend",
+        "Price":  41500,
+        "Cost":  27322
+    },
+    {
+        "Item":  "Ocean Legend Select",
+        "Price":  44250,
+        "Cost":  28411
+    },
+    {
+        "Item":  "Ocean Prestige",
+        "Price":  34275,
+        "Cost":  24652
+    },
+    {
+        "Item":  "Ocean Signature",
+        "Price":  39225,
+        "Cost":  26497
+    },
+    {
+        "Item":  "Okanagan Legend",
+        "Price":  42750,
+        "Cost":  28350
+    },
+    {
+        "Item":  "Okanagan Prestige",
+        "Price":  36250,
+        "Cost":  25595
+    },
+    {
+        "Item":  "Okanagan Signature",
+        "Price":  40750,
+        "Cost":  27503
+    },
+    {
+        "Item":  "AWP - Onzen",
+        "Price":  1800,
+        "Cost":  952
+    },
+    {
+        "Item":  "AWP - Onzen AWP",
+        "Price":  265,
+        "Cost":  155
+    },
+    {
+        "Item":  "AWP - Option installed at Ajax warehouse",
+        "Price":  300,
+        "Cost":  300
+    },
+    {
+        "Item":  "AWP - Over 100 kms",
+        "Price":  950,
+        "Cost":  350
+    },
+    {
+        "Item":  "AWP - Peak",
+        "Price":  1025,
+        "Cost":  446
+    },
+    {
+        "Item":  "Polar Bear Legend",
+        "Price":  50750,
+        "Cost":  31913
+    },
+    {
+        "Item":  "Polar Bear Prestige",
+        "Price":  44250,
+        "Cost":  29158
+    },
+    {
+        "Item":  "Polar Bear Signature",
+        "Price":  48750,
+        "Cost":  31066
+    },
+    {
+        "Item":  "AWP - Range Extender",
+        "Price":  189,
+        "Cost":  98
+    },
+    {
+        "Item":  "AWP - Robe Tree Cedar",
+        "Price":  289,
+        "Cost":  174
+    },
+    {
+        "Item":  "AWP - Rolling Cover - 14\u0027 BLACK",
+        "Price":  4899,
+        "Cost":  2822
+    },
+    {
+        "Item":  "AWP - Rolling Cover - 18\u0027 Polar Bear",
+        "Price":  5999,
+        "Cost":  3629
+    },
+    {
+        "Item":  "AWP - Safety Rail - Cabinet Mount",
+        "Price":  329,
+        "Cost":  220
+    },
+    {
+        "Item":  "AWP - SDS Upgrade - Ocean",
+        "Price":  2200,
+        "Cost":  1185
+    },
+    {
+        "Item":  "AWP - SDS Upgrade - Okanagan \u0026 Polar Bear (P \u0026 S)",
+        "Price":  2200,
+        "Cost":  1185
+    },
+    {
+        "Item":  "AWP - Site Check - OHTS (requested by Salesperson)",
+        "Price":  125,
+        "Cost":  125
+    },
+    {
+        "Item":  "AWP - Skyfall Fogger",
+        "Price":  445,
+        "Cost":  226
+    },
+    {
+        "Item":  "AWP - Smart pH System",
+        "Price":  550,
+        "Cost":  299
+    },
+    {
+        "Item":  "AWP - Solo Bar 64\" Cedar",
+        "Price":  399,
+        "Cost":  238
+    },
+    {
+        "Item":  "AWP - Solo Bar 72\" Cedar",
+        "Price":  399,
+        "Cost":  238
+    },
+    {
+        "Item":  "AWP - Spa Boy Dual",
+        "Price":  3125,
+        "Cost":  1686
+    },
+    {
+        "Item":  "AWP - Spa Removal - Prior",
+        "Price":  500,
+        "Cost":  500
+    },
+    {
+        "Item":  "AWP - Spa Removal - Same Day",
+        "Price":  250,
+        "Cost":  250
+    },
+    {
+        "Item":  "AWP - SpaBoy AWP",
+        "Price":  240,
+        "Cost":  140
+    },
+    {
+        "Item":  "AWP - Step 36\" 2-Tier Cedar",
+        "Price":  399,
+        "Cost":  247
+    },
+    {
+        "Item":  "AWP - Step 36\" 2-Tier Unstained Cedar",
+        "Price":  399,
+        "Cost":  235
+    },
+    {
+        "Item":  "AWP - Step 64\" 2-Tier Cedar",
+        "Price":  749,
+        "Cost":  470
+    },
+    {
+        "Item":  "AWP - Step 72\" 2 Tier Cedar",
+        "Price":  799,
+        "Cost":  472
+    },
+    {
+        "Item":  "AWP - Stool 25\" Cedar",
+        "Price":  259,
+        "Cost":  152
+    },
+    {
+        "Item":  "AWP - Storage Step 36\" 2-Tier Cedar",
+        "Price":  599,
+        "Cost":  414
+    },
+    {
+        "Item":  "AWP - Storage Step 72\" Full Length",
+        "Price":  899,
+        "Cost":  554
+    },
+    {
+        "Item":  "AWP - Ultimate 20",
+        "Price":  1200,
+        "Cost":  662
+    },
+    {
+        "Item":  "AWP - Ultimate 40",
+        "Price":  1500,
+        "Cost":  821
+    },
+    {
+        "Item":  "AWP - Ultimate 60",
+        "Price":  1800,
+        "Cost":  980
+    },
+    {
+        "Item":  "AWP - Vanish XL Cover Lifter",
+        "Price":  729,
+        "Cost":  435
+    },
+    {
+        "Item":  "AWP - Wet-Tunes (Athabascan, Hudson, Kingfisher, Wolverine)",
+        "Price":  1600,
+        "Cost":  1024
+    },
+    {
+        "Item":  "Wolverine",
+        "Price":  51000,
+        "Cost":  31551
+    },
+    {
+        "Item":  "Classic - 36\" 3-Tier Cedar",
+        "Price":  749,
+        "Cost":  463
+    },
+    {
+        "Item":  "Classic - 40 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Classic - 50 - 100km",
+        "Price":  850,
+        "Cost":  250
+    },
+    {
+        "Item":  "Classic - 50 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Classic - 60 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Classic - 64\" 3-Tier Cedar",
+        "Price":  1149,
+        "Cost":  708
+    },
+    {
+        "Item":  "Classic Prestige 7\u0027",
+        "Price":  12825,
+        "Cost":  9256
+    },
+    {
+        "Item":  "Classic Signature 7\u0027",
+        "Price":  16125,
+        "Cost":  10801
+    },
+    {
+        "Item":  "Classic - 72\" 3-Tier Cedar",
+        "Price":  1199,
+        "Cost":  710
+    },
+    {
+        "Item":  "Classic - 72\" 4-Tier Cedar",
+        "Price":  1499,
+        "Cost":  1038
+    },
+    {
+        "Item":  "Classic Prestige 8\u0027",
+        "Price":  15125,
+        "Cost":  10389
+    },
+    {
+        "Item":  "Classic Signature 8\u0027",
+        "Price":  17225,
+        "Cost":  11940
+    },
+    {
+        "Item":  "Classic - Additional Assistance (per person)",
+        "Price":  200,
+        "Cost":  200
+    },
+    {
+        "Item":  "Classic - Aquafinesse Spa",
+        "Price":  165,
+        "Cost":  100
+    },
+    {
+        "Item":  "Classic - Bromine Spa",
+        "Price":  200,
+        "Cost":  125
+    },
+    {
+        "Item":  "Classic - Cabinet Assist Lift (hydraulic)",
+        "Price":  499,
+        "Cost":  234
+    },
+    {
+        "Item":  "Classic - Cabinet Free Cover Rest (Drop behind)",
+        "Price":  349,
+        "Cost":  211
+    },
+    {
+        "Item":  "Classic - Cabinet Free Cover Shelf",
+        "Price":  299,
+        "Cost":  176
+    },
+    {
+        "Item":  "Classic - Cabinet Mount Cover Shelf",
+        "Price":  299,
+        "Cost":  182
+    },
+    {
+        "Item":  "Classic - Chlorine Spa",
+        "Price":  185,
+        "Cost":  105
+    },
+    {
+        "Item":  "Classic - Corner Step 2-Tier Cedar",
+        "Price":  799,
+        "Cost":  480
+    },
+    {
+        "Item":  "Classic - Cover Rock-it Undermount",
+        "Price":  299,
+        "Cost":  177
+    },
+    {
+        "Item":  "Classic - Covermate 1 (arctic bracket)",
+        "Price":  449,
+        "Cost":  286
+    },
+    {
+        "Item":  "Classic - DuraStep II Black",
+        "Price":  249,
+        "Cost":  122
+    },
+    {
+        "Item":  "Classic - Family Lighting",
+        "Price":  750,
+        "Cost":  504
+    },
+    {
+        "Item":  "Classic - Forever Cabinet",
+        "Price":  1250,
+        "Cost":  805
+    },
+    {
+        "Item":  "Classic - Graphite Step",
+        "Price":  249,
+        "Cost":  137
+    },
+    {
+        "Item":  "Classic - Handrail - Cabinet Free (arctic)",
+        "Price":  269,
+        "Cost":  167
+    },
+    {
+        "Item":  "Classic - In Touch Internet Control",
+        "Price":  430,
+        "Cost":  190
+    },
+    {
+        "Item":  "Classic - Jet Installation",
+        "Price":  225,
+        "Cost":  200
+    },
+    {
+        "Item":  "Classic - Maintenance Free Cabinet",
+        "Price":  850,
+        "Cost":  584
+    },
+    {
+        "Item":  "Classic - NOM Step 2 Tier 64\" CHARCOAL",
+        "Price":  929,
+        "Cost":  562
+    },
+    {
+        "Item":  "Classic - NOM Step 2 Tier 72\" CHARCOAL",
+        "Price":  999,
+        "Cost":  598
+    },
+    {
+        "Item":  "Classic - NOM Step 3 Tier 64\" CHARCOAL",
+        "Price":  1299,
+        "Cost":  809
+    },
+    {
+        "Item":  "Classic - NOM Step 3 Tier 72\" CHARCOAL",
+        "Price":  1399,
+        "Cost":  853
+    },
+    {
+        "Item":  "Classic - NOM Step 4 Tier 64\" CHARCOAL",
+        "Price":  1599,
+        "Cost":  1029
+    },
+    {
+        "Item":  "Classic - NOM Step 4 Tier 72\" CHARCOAL",
+        "Price":  1799,
+        "Cost":  1083
+    },
+    {
+        "Item":  "Classic - Onzen",
+        "Price":  1800,
+        "Cost":  952
+    },
+    {
+        "Item":  "Classic - Onzen Spa",
+        "Price":  185,
+        "Cost":  115
+    },
+    {
+        "Item":  "Classic - Option installed at Ajax warehouse",
+        "Price":  300,
+        "Cost":  300
+    },
+    {
+        "Item":  "Classic - Over 100 kms",
+        "Price":  950,
+        "Cost":  350
+    },
+    {
+        "Item":  "Classic - Peak",
+        "Price":  1025,
+        "Cost":  446
+    },
+    {
+        "Item":  "Classic - Range Extender - Custom Upgrade",
+        "Price":  189,
+        "Cost":  98
+    },
+    {
+        "Item":  "Classic - Robe Tree Cedar",
+        "Price":  289,
+        "Cost":  174
+    },
+    {
+        "Item":  "Classic - Safety Rail - Cabinet Mount",
+        "Price":  329,
+        "Cost":  220
+    },
+    {
+        "Item":  "Classic - Site Check - OHTS (requested by Salesperson)",
+        "Price":  125,
+        "Cost":  125
+    },
+    {
+        "Item":  "Classic - Solo Bar 64\" Cedar",
+        "Price":  399,
+        "Cost":  238
+    },
+    {
+        "Item":  "Classic - Solo Bar 72\" Cedar",
+        "Price":  399,
+        "Cost":  238
+    },
+    {
+        "Item":  "Classic - Spa Removal - Prior",
+        "Price":  500,
+        "Cost":  500
+    },
+    {
+        "Item":  "Classic - Spa Removal - Same Day",
+        "Price":  250,
+        "Cost":  250
+    },
+    {
+        "Item":  "Classic - Step 36\" 2-Tier Cedar",
+        "Price":  399,
+        "Cost":  247
+    },
+    {
+        "Item":  "Classic - Step 36\" 2-Tier Unstained Cedar",
+        "Price":  399,
+        "Cost":  235
+    },
+    {
+        "Item":  "Classic - Step 64\" 2-Tier Cedar",
+        "Price":  749,
+        "Cost":  470
+    },
+    {
+        "Item":  "Classic - Step 72\" 2 Tier Cedar",
+        "Price":  799,
+        "Cost":  472
+    },
+    {
+        "Item":  "Classic - Stool 25\" Cedar",
+        "Price":  259,
+        "Cost":  152
+    },
+    {
+        "Item":  "Classic - Storage Step 36\" 2-Tier Cedar",
+        "Price":  599,
+        "Cost":  414
+    },
+    {
+        "Item":  "Classic - Storage Step 72\" Full Length",
+        "Price":  899,
+        "Cost":  527
+    },
+    {
+        "Item":  "Timberwolf/Whistler Prestige",
+        "Price":  12550,
+        "Cost":  8618
+    },
+    {
+        "Item":  "Timberwolf/Whistler Signature",
+        "Price":  15850,
+        "Cost":  9949
+    },
+    {
+        "Item":  "Classic - Touch Screen Topside Upgrade",
+        "Price":  700,
+        "Cost":  403
+    },
+    {
+        "Item":  "Classic - Waterlab",
+        "Price":  1500,
+        "Cost":  863
+    },
+    {
+        "Item":  "Classic - Wet-Tunes with Bluetooth",
+        "Price":  1600,
+        "Cost":  1024
+    },
+    {
+        "Item":  "Core - 40 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Core - 50 - 100km",
+        "Price":  850,
+        "Cost":  250
+    },
+    {
+        "Item":  "Core - 50 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Core - Additional Assistance (per person)",
+        "Price":  200,
+        "Cost":  200
+    },
+    {
+        "Item":  "Core - Aquafinesse Spa",
+        "Price":  165,
+        "Cost":  100
+    },
+    {
+        "Item":  "Core - Bromine Spa",
+        "Price":  200,
+        "Cost":  125
+    },
+    {
+        "Item":  "Core - Cabinet Free Cover Rest (Drop behind)",
+        "Price":  349,
+        "Cost":  211
+    },
+    {
+        "Item":  "Core - Cabinet Free Cover Shelf",
+        "Price":  299,
+        "Cost":  176
+    },
+    {
+        "Item":  "Core - Chlorine Spa",
+        "Price":  185,
+        "Cost":  105
+    },
+    {
+        "Item":  "Core - Cover Rock-it Undermount",
+        "Price":  299,
+        "Cost":  177
+    },
+    {
+        "Item":  "Core - Covermate 1 (coyote bracket)",
+        "Price":  449,
+        "Cost":  286
+    },
+    {
+        "Item":  "Core - Custom Colour Upgrade (Espresso)",
+        "Price":  200,
+        "Cost":  121
+    },
+    {
+        "Item":  "Core - DuraStep II Black",
+        "Price":  249,
+        "Cost":  122
+    },
+    {
+        "Item":  "Core - Entertainment Pkg - Fountain, FLP, Drink Holders, Chrome Trim",
+        "Price":  500,
+        "Cost":  228
+    },
+    {
+        "Item":  "Core - Graphite Step",
+        "Price":  249,
+        "Cost":  137
+    },
+    {
+        "Item":  "Core - Handrail - Cabinet Free (arctic)",
+        "Price":  269,
+        "Cost":  167
+    },
+    {
+        "Item":  "Core - In Touch Internet Control",
+        "Price":  430,
+        "Cost":  190
+    },
+    {
+        "Item":  "Lunar Orion Prestige",
+        "Price":  11000,
+        "Cost":  7495
+    },
+    {
+        "Item":  "Lunar Orion Signature",
+        "Price":  14000,
+        "Cost":  8815
+    },
+    {
+        "Item":  "Core - Mylovac Cover Upgrade",
+        "Price":  500,
+        "Cost":  345
+    },
+    {
+        "Item":  "Core - NOM Step 2 Tier 64\" CHARCOAL",
+        "Price":  929,
+        "Cost":  562
+    },
+    {
+        "Item":  "Core - NOM Step 2 Tier 64\" SABLE",
+        "Price":  929,
+        "Cost":  562
+    },
+    {
+        "Item":  "Core - NOM Step 2 Tier 72\" CHARCOAL",
+        "Price":  999,
+        "Cost":  598
+    },
+    {
+        "Item":  "Core - NOM Step 2 Tier 72\" SABLE",
+        "Price":  999,
+        "Cost":  598
+    },
+    {
+        "Item":  "Core - NOM Step 3 Tier 64\" CHARCOAL",
+        "Price":  1299,
+        "Cost":  809
+    },
+    {
+        "Item":  "Core - NOM Step 3 Tier 64\" SABLE",
+        "Price":  1299,
+        "Cost":  809
+    },
+    {
+        "Item":  "Core - NOM Step 3 Tier 72\" CHARCOAL",
+        "Price":  1399,
+        "Cost":  853
+    },
+    {
+        "Item":  "Core - NOM Step 3 Tier 72\" SABLE",
+        "Price":  1399,
+        "Cost":  853
+    },
+    {
+        "Item":  "Core - NOM Step 4 Tier 64\" CHARCOAL",
+        "Price":  1599,
+        "Cost":  1029
+    },
+    {
+        "Item":  "Core - NOM Step 4 Tier 64\" SABLE",
+        "Price":  1599,
+        "Cost":  1029
+    },
+    {
+        "Item":  "Core - NOM Step 4 Tier 72\" CHARCOAL",
+        "Price":  1799,
+        "Cost":  1083
+    },
+    {
+        "Item":  "Core - NOM Step 4 Tier 72\" SABLE",
+        "Price":  1799,
+        "Cost":  1083
+    },
+    {
+        "Item":  "Nova Prestige",
+        "Price":  10500,
+        "Cost":  7165
+    },
+    {
+        "Item":  "Nova Signature",
+        "Price":  13000,
+        "Cost":  8485
+    },
+    {
+        "Item":  "Core - Onzen",
+        "Price":  1800,
+        "Cost":  952
+    },
+    {
+        "Item":  "Core - Onzen Spa",
+        "Price":  185,
+        "Cost":  115
+    },
+    {
+        "Item":  "Core - Option installed at Ajax warehouse",
+        "Price":  300,
+        "Cost":  300
+    },
+    {
+        "Item":  "Core - Over 100 kms",
+        "Price":  950,
+        "Cost":  350
+    },
+    {
+        "Item":  "Core - Ozone",
+        "Price":  940,
+        "Cost":  558
+    },
+    {
+        "Item":  "Core - Site Check - OHTS (requested by Salesperson)",
+        "Price":  125,
+        "Cost":  125
+    },
+    {
+        "Item":  "Core - Sound FX",
+        "Price":  900,
+        "Cost":  621
+    },
+    {
+        "Item":  "Core - Spa Removal - Prior",
+        "Price":  500,
+        "Cost":  500
+    },
+    {
+        "Item":  "Core - Spa Removal - Same Day",
+        "Price":  250,
+        "Cost":  250
+    },
+    {
+        "Item":  "Core - Tech Package - Touch Screen Topside \u0026 In-Touch",
+        "Price":  1200,
+        "Cost":  690
+    },
+    {
+        "Item":  "Core - Water Care Package - Onzen \u0026 Ozone",
+        "Price":  2400,
+        "Cost":  1150
+    },
+    {
+        "Item":  "Covana Evolution - 10\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  15549,
+        "Cost":  7974
+    },
+    {
+        "Item":  "Covana Evolution - 10\u0027 Slate/White or Mocha/White",
+        "Price":  15009,
+        "Cost":  7752
+    },
+    {
+        "Item":  "Covana Evolution - 10ft - Roller Shade PURE BLACK (118\")",
+        "Price":  1009,
+        "Cost":  696
+    },
+    {
+        "Item":  "Covana Evolution - 10ft - Sun Screen (118\")",
+        "Price":  1109,
+        "Cost":  762
+    },
+    {
+        "Item":  "Covana Evolution - 11\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  16179,
+        "Cost":  8292
+    },
+    {
+        "Item":  "Covana Evolution - 11\u0027 Slate/White or Mocha/White",
+        "Price":  15699,
+        "Cost":  8058
+    },
+    {
+        "Item":  "Covana Evolution - 11ft - Roller Shade PURE BLACK (130\")",
+        "Price":  1029,
+        "Cost":  708
+    },
+    {
+        "Item":  "Covana Evolution - 11ft - Sun Screen (130\")",
+        "Price":  1169,
+        "Cost":  798
+    },
+    {
+        "Item":  "Covana Evolution - 8\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  13849,
+        "Cost":  7362
+    },
+    {
+        "Item":  "Covana Evolution - 8\u0027 Slate/White or Mocha/White",
+        "Price":  13299,
+        "Cost":  7146
+    },
+    {
+        "Item":  "Covana Evolution - 8ft - Roller Shade ISLAND (93.5\")",
+        "Price":  999,
+        "Cost":  684
+    },
+    {
+        "Item":  "Covana Evolution - 8ft - Roller Shade MOCHA (93.5\")",
+        "Price":  769,
+        "Cost":  498
+    },
+    {
+        "Item":  "Covana Evolution - 8ft - Roller Shade PURE BLACK (93.5\")",
+        "Price":  769,
+        "Cost":  498
+    },
+    {
+        "Item":  "Covana Evolution - 8ft - Roller Shade ROCKIES (93.5\")",
+        "Price":  999,
+        "Cost":  684
+    },
+    {
+        "Item":  "Covana Evolution - 8ft - Roller Shade SLATE (93.5\")",
+        "Price":  769,
+        "Cost":  498
+    },
+    {
+        "Item":  "Covana Evolution - 8ft - Sun Screen (93.5\")",
+        "Price":  949,
+        "Cost":  576
+    },
+    {
+        "Item":  "Covana Evolution - 8ft - Sun Screen COASTLINE (93.5\")",
+        "Price":  949,
+        "Cost":  648
+    },
+    {
+        "Item":  "Covana Evolution - 9\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  14929,
+        "Cost":  7662
+    },
+    {
+        "Item":  "Covana Evolution - 9\u0027 Slate/White or Mocha/White",
+        "Price":  14479,
+        "Cost":  7494
+    },
+    {
+        "Item":  "Covana Evolution - 9ft - Roller Shade PURE BLACK (106\")",
+        "Price":  949,
+        "Cost":  648
+    },
+    {
+        "Item":  "Covana Evolution - 9ft - Sun Screen (106\")",
+        "Price":  1049,
+        "Cost":  726
+    },
+    {
+        "Item":  "Covana Evolution - All - Roller Shade ISLAND (88.25\")",
+        "Price":  999,
+        "Cost":  684
+    },
+    {
+        "Item":  "Covana Evolution - All - Roller Shade MOCHA (88.25\")",
+        "Price":  769,
+        "Cost":  498
+    },
+    {
+        "Item":  "Covana Evolution - All - Roller Shade PURE BLACK (88.25\")",
+        "Price":  769,
+        "Cost":  498
+    },
+    {
+        "Item":  "Covana Evolution - All - Roller Shade ROCKIES (88.25\")",
+        "Price":  999,
+        "Cost":  684
+    },
+    {
+        "Item":  "Covana Evolution - All - Roller Shade SLATE (88.25\")",
+        "Price":  769,
+        "Cost":  498
+    },
+    {
+        "Item":  "Covana Evolution - All - Sun Screen (88.25\")",
+        "Price":  869,
+        "Cost":  576
+    },
+    {
+        "Item":  "Covana Evolution - All - Sun Screen BLUE VELVET(88.25\")",
+        "Price":  949,
+        "Cost":  648
+    },
+    {
+        "Item":  "Covana Evolution - All - Sun Screen COASTLINE (88.25\")",
+        "Price":  949,
+        "Cost":  648
+    },
+    {
+        "Item":  "Covana Evolution - All - Sun Screen SEASHORE (88.25\")",
+        "Price":  949,
+        "Cost":  648
+    },
+    {
+        "Item":  "Covana Evolution - Installation",
+        "Price":  1500,
+        "Cost":  750
+    },
+    {
+        "Item":  "Covana Evolution - Non Permanent Mounting Plates (4)",
+        "Price":  549,
+        "Cost":  354
+    },
+    {
+        "Item":  "Covana Evolution - Roller Shades Rainforest Panoramic Pack (Set of 3)",
+        "Price":  2779,
+        "Cost":  1962
+    },
+    {
+        "Item":  "Covana Legend - 12\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  25739,
+        "Cost":  13134
+    },
+    {
+        "Item":  "Covana Legend - 12\u0027 Slate/White or Mocha/White",
+        "Price":  25069,
+        "Cost":  12810
+    },
+    {
+        "Item":  "Covana Legend - 13\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  25789,
+        "Cost":  13158
+    },
+    {
+        "Item":  "Covana Legend - 13\u0027 Slate/White or Mocha/White",
+        "Price":  25109,
+        "Cost":  12834
+    },
+    {
+        "Item":  "Covana Legend - 14\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  25839,
+        "Cost":  13182
+    },
+    {
+        "Item":  "Covana Legend - 14\u0027 Slate/White or Mocha/White",
+        "Price":  25159,
+        "Cost":  12858
+    },
+    {
+        "Item":  "Covana Legend - 15\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  25889,
+        "Cost":  13206
+    },
+    {
+        "Item":  "Covana Legend - 15\u0027 Slate/White or Mocha/White",
+        "Price":  25209,
+        "Cost":  12882
+    },
+    {
+        "Item":  "Covana Legend - 16\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  28429,
+        "Cost":  14478
+    },
+    {
+        "Item":  "Covana Legend - 16\u0027 Slate/White or Mocha/White",
+        "Price":  27579,
+        "Cost":  14058
+    },
+    {
+        "Item":  "Covana Legend - 17\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  28459,
+        "Cost":  14496
+    },
+    {
+        "Item":  "Covana Legend - 17\u0027 Slate/White or Mocha/White",
+        "Price":  27639,
+        "Cost":  14088
+    },
+    {
+        "Item":  "Covana Legend - 18\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  28509,
+        "Cost":  14520
+    },
+    {
+        "Item":  "Covana Legend - 18\u0027 Slate/White or Mocha/White",
+        "Price":  27689,
+        "Cost":  14112
+    },
+    {
+        "Item":  "Covana Legend - 19\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  28559,
+        "Cost":  14538
+    },
+    {
+        "Item":  "Covana Legend - 19\u0027 Slate/White or Mocha/White",
+        "Price":  27739,
+        "Cost":  14136
+    },
+    {
+        "Item":  "Covana Legend - 20\u0027 Slate/Platinum or Mocha/Latte",
+        "Price":  29569,
+        "Cost":  15042
+    },
+    {
+        "Item":  "Covana Legend - 20\u0027 Slate/White or Mocha/White",
+        "Price":  28689,
+        "Cost":  14604
+    },
+    {
+        "Item":  "Covana Legend - Dual Side Brackets (Set of 4)",
+        "Price":  199,
+        "Cost":  156
+    },
+    {
+        "Item":  "Covana Legend - Emergency Battery Back Up Pack",
+        "Price":  969,
+        "Cost":  708
+    },
+    {
+        "Item":  "Covana Legend - Extended Brackets (set of 4)",
+        "Price":  229,
+        "Cost":  186
+    },
+    {
+        "Item":  "Covana Legend - Installation",
+        "Price":  2000,
+        "Cost":  1000
+    },
+    {
+        "Item":  "Covana Legend - Roller Shade PURE BLACK (88.25\")",
+        "Price":  769,
+        "Cost":  498
+    },
+    {
+        "Item":  "Covana Legend - Secondary Escape Hatch LATTE",
+        "Price":  1129,
+        "Cost":  720
+    },
+    {
+        "Item":  "Covana Legend - Secondary Escape Hatch PLATINUM",
+        "Price":  1129,
+        "Cost":  720
+    },
+    {
+        "Item":  "Covana Legend - Secondary Escape Hatch WHITE",
+        "Price":  1009,
+        "Cost":  660
+    },
+    {
+        "Item":  "Covana Legend - Sun Screen COASTLINE (88.25\")",
+        "Price":  949,
+        "Cost":  648
+    },
+    {
+        "Item":  "Custom - 36\" 3-Tier Cedar",
+        "Price":  749,
+        "Cost":  463
+    },
+    {
+        "Item":  "Custom - 40 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Custom - 50 - 100km",
+        "Price":  850,
+        "Cost":  250
+    },
+    {
+        "Item":  "Custom - 50 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Custom - 60 AMP GFCI",
+        "Price":  359,
+        "Cost":  231
+    },
+    {
+        "Item":  "Custom - 64\" 3-Tier Cedar",
+        "Price":  1149,
+        "Cost":  708
+    },
+    {
+        "Item":  "Custom - 72\" 3-Tier Cedar",
+        "Price":  1199,
+        "Cost":  710
+    },
+    {
+        "Item":  "Custom - 72\" 4-Tier Cedar",
+        "Price":  1499,
+        "Cost":  1038
+    },
+    {
+        "Item":  "Custom - Additional Assistance (per person)",
+        "Price":  200,
+        "Cost":  200
+    },
+    {
+        "Item":  "Custom - Aquafinesse AWP",
+        "Price":  390,
+        "Cost":  255
+    },
+    {
+        "Item":  "Custom - Aquafinesse Spa",
+        "Price":  165,
+        "Cost":  100
+    },
+    {
+        "Item":  "Custom - Aquatremor",
+        "Price":  2980,
+        "Cost":  1434.05
+    },
+    {
+        "Item":  "Arctic Fox Prestige",
+        "Price":  15125,
+        "Cost":  10214.3
+    },
+    {
+        "Item":  "Arctic Fox Signature",
+        "Price":  18975,
+        "Cost":  11611.3
+    },
+    {
+        "Item":  "Custom - Bromine Spa",
+        "Price":  200,
+        "Cost":  125
+    },
+    {
+        "Item":  "Custom - Cabinet Free Cover Rest (Drop behind)",
+        "Price":  349,
+        "Cost":  211
+    },
+    {
+        "Item":  "Custom - Cabinet Free Cover Shelf",
+        "Price":  299,
+        "Cost":  176
+    },
+    {
+        "Item":  "Custom - Cabinet Mount Cover Shelf",
+        "Price":  299,
+        "Cost":  182
+    },
+    {
+        "Item":  "Custom - Chlorine Spa",
+        "Price":  185,
+        "Cost":  105
+    },
+    {
+        "Item":  "Custom - Corner Lighting",
+        "Price":  750,
+        "Cost":  462.3
+    },
+    {
+        "Item":  "Custom - Corner Step 2-Tier Cedar",
+        "Price":  799,
+        "Cost":  480
+    },
+    {
+        "Item":  "Custom - Cover Rock-it Undermount",
+        "Price":  299,
+        "Cost":  177
+    },
+    {
+        "Item":  "Custom - Covermate 1 (arctic bracket)",
+        "Price":  449,
+        "Cost":  286
+    },
+    {
+        "Item":  "Custom - DuraStep II Black",
+        "Price":  249,
+        "Cost":  122
+    },
+    {
+        "Item":  "Custom - Ethernet Over Power",
+        "Price":  289,
+        "Cost":  169
+    },
+    {
+        "Item":  "Custom - Graphite Step",
+        "Price":  249,
+        "Cost":  137
+    },
+    {
+        "Item":  "Custom - Handrail - Cabinet Free (arctic)",
+        "Price":  269,
+        "Cost":  167
+    },
+    {
+        "Item":  "Custom - Jet Installation",
+        "Price":  225,
+        "Cost":  200
+    },
+    {
+        "Item":  "Custom - MOD Step 2 XL with handrail",
+        "Price":  979,
+        "Cost":  665
+    },
+    {
+        "Item":  "Custom - MOD Step 4",
+        "Price":  1799,
+        "Cost":  920
+    },
+    {
+        "Item":  "Custom - NOM Step 2 Tier 64\"",
+        "Price":  929,
+        "Cost":  562
+    },
+    {
+        "Item":  "Custom - NOM Step 2 Tier 72\"",
+        "Price":  999,
+        "Cost":  598
+    },
+    {
+        "Item":  "Custom - NOM Step 3 Tier 64\"",
+        "Price":  1299,
+        "Cost":  809
+    },
+    {
+        "Item":  "Custom - NOM Step 3 Tier 72\"",
+        "Price":  1399,
+        "Cost":  853
+    },
+    {
+        "Item":  "Custom - NOM Step 4 Tier 64\"",
+        "Price":  1599,
+        "Cost":  1029
+    },
+    {
+        "Item":  "Custom - NOM Step 4 Tier 72\"",
+        "Price":  1799,
+        "Cost":  1083
+    },
+    {
+        "Item":  "Custom - Onzen",
+        "Price":  1800,
+        "Cost":  952.2
+    },
+    {
+        "Item":  "Custom - Onzen AWP",
+        "Price":  265,
+        "Cost":  155
+    },
+    {
+        "Item":  "Custom - Onzen Spa",
+        "Price":  185,
+        "Cost":  115
+    },
+    {
+        "Item":  "Custom - Option installed at Ajax warehouse",
+        "Price":  300,
+        "Cost":  300
+    },
+    {
+        "Item":  "Custom - Over 100 kms",
+        "Price":  950,
+        "Cost":  350
+    },
+    {
+        "Item":  "Custom - Peak",
+        "Price":  1025,
+        "Cost":  446.2
+    },
+    {
+        "Item":  "Cub Prestige 7\u0027",
+        "Price":  15675,
+        "Cost":  11051.1
+    },
+    {
+        "Item":  "Cub Prestige 8\u0027",
+        "Price":  16775,
+        "Cost":  12206.1
+    },
+    {
+        "Item":  "Custom - Range Extender",
+        "Price":  189,
+        "Cost":  98
+    },
+    {
+        "Item":  "Custom - Robe Tree Cedar",
+        "Price":  289,
+        "Cost":  174
+    },
+    {
+        "Item":  "Custom - Safety Rail - Cabinet Mount",
+        "Price":  329,
+        "Cost":  220
+    },
+    {
+        "Item":  "Custom - SDS Upgrade (Fox, 7\u0027,8\u0027 \u0026 XL Legend excluded)",
+        "Price":  2200,
+        "Cost":  1185
+    },
+    {
+        "Item":  "Cub Legend Select 8\u0027",
+        "Price":  24475,
+        "Cost":  15550.1
+    },
+    {
+        "Item":  "Cub Signature 7\u0027",
+        "Price":  19525,
+        "Cost":  12569.1
+    },
+    {
+        "Item":  "Cub Signature 8\u0027",
+        "Price":  20625,
+        "Cost":  13878.1
+    },
+    {
+        "Item":  "Custom - Skyfall Fogger",
+        "Price":  445,
+        "Cost":  266
+    },
+    {
+        "Item":  "Custom - Smart pH System",
+        "Price":  550,
+        "Cost":  299
+    },
+    {
+        "Item":  "Custom - Solo Bar 64\" Cedar",
+        "Price":  399,
+        "Cost":  238
+    },
+    {
+        "Item":  "Custom - Solo Bar 72\" Cedar",
+        "Price":  399,
+        "Cost":  238
+    },
+    {
+        "Item":  "Custom - Spa Boy",
+        "Price":  2825,
+        "Cost":  1487.9
+    },
+    {
+        "Item":  "Custom - Spa Removal - Prior",
+        "Price":  500,
+        "Cost":  500
+    },
+    {
+        "Item":  "Custom - Spa Removal - Same Day",
+        "Price":  250,
+        "Cost":  250
+    },
+    {
+        "Item":  "Custom - SpaBoy AWP",
+        "Price":  240,
+        "Cost":  140
+    },
+    {
+        "Item":  "Custom - SpaBoy Spa",
+        "Price":  165,
+        "Cost":  100
+    },
+    {
+        "Item":  "Custom - Step 36\" 2-Tier Cedar",
+        "Price":  399,
+        "Cost":  247
+    },
+    {
+        "Item":  "Custom - Step 36\" 2-Tier Unstained Cedar",
+        "Price":  399,
+        "Cost":  235
+    },
+    {
+        "Item":  "Custom - Step 64\" 2-Tier Cedar",
+        "Price":  749,
+        "Cost":  470
+    },
+    {
+        "Item":  "Custom - Step 72\" 2 Tier Cedar",
+        "Price":  799,
+        "Cost":  472
+    },
+    {
+        "Item":  "Custom - Stool 25\" Cedar",
+        "Price":  259,
+        "Cost":  152
+    },
+    {
+        "Item":  "Custom - Storage Step 36\" 2-Tier Cedar",
+        "Price":  599,
+        "Cost":  414
+    },
+    {
+        "Item":  "Custom - Storage Step 72\" Full Length",
+        "Price":  899,
+        "Cost":  527
+    },
+    {
+        "Item":  "Summit XL Legend Select",
+        "Price":  28875,
+        "Cost":  18176.18
+    },
+    {
+        "Item":  "Summit XL Prestige",
+        "Price":  21175,
+        "Cost":  14832.18
+    },
+    {
+        "Item":  "Summit XL Signature",
+        "Price":  25025,
+        "Cost":  16504.18
+    },
+    {
+        "Item":  "Custom - U/L 20",
+        "Price":  1100,
+        "Cost":  662.4
+    },
+    {
+        "Item":  "Custom - U/L 40",
+        "Price":  1400,
+        "Cost":  821.1
+    },
+    {
+        "Item":  "Custom - U/L 60",
+        "Price":  1700,
+        "Cost":  979.8
+    }
 ]

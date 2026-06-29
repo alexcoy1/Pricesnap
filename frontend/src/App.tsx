@@ -32,16 +32,12 @@ import * as XLSX from 'xlsx';
 import './index.css';
 
 const EMBEDDED_SAMPLE_CATALOG: PriceListItem[] = [
-  { Item: 'Widget Pro - Standard', Price: 1299, Cost: 650 },
-  { Item: 'Widget Pro - Premium', Price: 1899, Cost: 950 },
-  { Item: 'Widget Starter Kit', Price: 149, Cost: 75 },
-  { Item: 'Service Plan - Annual', Price: 499, Cost: 200 },
-  { Item: 'Installation - Standard', Price: 799, Cost: 400 },
-  { Item: 'Extended Warranty - 3 Year', Price: 449, Cost: 180 },
-  { Item: 'Training Package - Remote', Price: 999, Cost: 400 },
-  { Item: 'Accessory Pack - Deluxe', Price: 449, Cost: 220 },
-  { Item: 'Shipping - National', Price: 249, Cost: 120 },
-  { Item: 'Software License - Team (5 seats)', Price: 2499, Cost: 900 },
+  { Item: "Cub Prestige 7'", Price: 15675, Cost: 11051.1 },
+  { Item: "Cub Signature 7'", Price: 19525, Cost: 12569.1 },
+  { Item: "Cub Legend Select 8'", Price: 24475, Cost: 15550.1 },
+  { Item: 'Custom - Onzen', Price: 1800, Cost: 952.2 },
+  { Item: 'Custom - Spa Boy', Price: 2825, Cost: 1487.9 },
+  { Item: 'Covana Legend - Installation', Price: 2000, Cost: 1000 },
 ];
 
 export type Theme = 'light' | 'dark';

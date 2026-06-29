@@ -76,7 +76,7 @@ export const NewQuoteView: React.FC<Props> = ({
   const lineTotal = (line: QuoteLineItem) => line.TotalPrice;
 
   return (
-    <div className="new-quote-view" style={{ maxWidth: 960, margin: '0 auto' }}>
+    <div className="new-quote-view">
       <h2 className="view-heading">Create New Quote</h2>
 
       <div className="card mb-6">
@@ -149,7 +149,7 @@ export const NewQuoteView: React.FC<Props> = ({
         <button
           type="button"
           className="btn btn-primary"
-          style={{ marginTop: 12 }}
+          style={{ marginTop: 12, width: '100%' }}
           onClick={onIdentifyItems}
           disabled={!priceListData || isLoading || !userInputText.trim()}
         >
@@ -194,9 +194,10 @@ export const NewQuoteView: React.FC<Props> = ({
       </div>
 
       {priceListData && (
-        <div className="card mb-6">
+        <div className="card mb-6 quote-items-card">
           <h3 style={{ marginBottom: 16, fontWeight: 600 }}>Quote Items</h3>
-          <div className="quote-table-wrapper">
+
+          <div className="quote-table-wrapper desktop-quote-table">
             <table className="table">
               <thead>
                 <tr>
@@ -253,11 +254,60 @@ export const NewQuoteView: React.FC<Props> = ({
               </tbody>
             </table>
           </div>
+
+          <div className="mobile-quote-cards">
+            {quoteLines.map((line, i) => (
+              <div key={`${line.Item}-m-${i}`} className="quote-line-card">
+                <div className="quote-line-card-top">
+                  <div className="quote-line-card-name">{line.Item}</div>
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => onRemoveLine(i)}>Remove</button>
+                </div>
+                <div className="quote-line-card-grid">
+                  <label className="quote-line-field">
+                    <span>Qty</span>
+                    <input
+                      type="number"
+                      min={1}
+                      className="form-input"
+                      value={line.Quantity}
+                      onChange={(e) => onLineQtyChange(i, parseInt(e.target.value) || 1)}
+                    />
+                  </label>
+                  <label className="quote-line-field">
+                    <span>List</span>
+                    <div className="quote-line-readonly">${line.Price.toFixed(2)}</div>
+                  </label>
+                  <label className="quote-line-field">
+                    <span>Price</span>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={line.originalPrice ?? line.Price}
+                      onChange={(e) => onLinePriceChange(i, parseFloat(e.target.value) || 0)}
+                    />
+                  </label>
+                  <label className="quote-line-field quote-line-field-wide">
+                    <span>Promotion</span>
+                    <select
+                      className="form-select"
+                      value={line.promotion || ''}
+                      onChange={(e) => onLinePromotionChange(i, e.target.value)}
+                    >
+                      <option value="">None</option>
+                      {promotions.map((p) => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <div className="quote-line-card-total">Line total: ${lineTotal(line).toFixed(2)}</div>
+              </div>
+            ))}
+          </div>
+
           {quoteLines.length > 0 && (
-            <div className="flex gap-2" style={{ marginTop: 12, justifyContent: 'flex-end' }}>
+            <div className="quote-create-actions">
               <button
                 type="button"
-                className="btn btn-primary"
+                className="btn btn-primary btn-block-mobile"
                 onClick={onCreateQuote}
                 disabled={isLoading}
               >

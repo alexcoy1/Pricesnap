@@ -42,6 +42,7 @@ function isActive(view: AppView, current: AppView): boolean {
 
 export const TopNav: React.FC<Props> = ({ currentView, onNavigate, onLogout, userName }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const settingsActive = SETTINGS_NAV.some((s) => s.view === currentView);
 
@@ -56,31 +57,59 @@ export const TopNav: React.FC<Props> = ({ currentView, onNavigate, onLogout, use
     return () => document.removeEventListener('mousedown', close);
   }, [settingsOpen]);
 
+  useEffect(() => {
+    document.body.classList.toggle('nav-drawer-open', mobileOpen);
+    return () => document.body.classList.remove('nav-drawer-open');
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    setMobileOpen(false);
+    setSettingsOpen(false);
+  }, [currentView]);
+
+  const go = (view: AppView) => {
+    onNavigate(view);
+    setMobileOpen(false);
+    setSettingsOpen(false);
+  };
+
+  const renderNavButton = (item: { view: AppView; label: string }, className = 'top-nav-link') => (
+    <button
+      key={item.view}
+      type="button"
+      className={`${className}${isActive(item.view, currentView) ? ' active' : ''}`}
+      onClick={() => go(item.view)}
+    >
+      {item.label}
+    </button>
+  );
+
   return (
     <header className="top-nav">
       <div className="top-nav-inner">
         <button
           type="button"
+          className="top-nav-menu-btn"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={mobileOpen}
+        >
+          <span className="top-nav-menu-icon" aria-hidden />
+        </button>
+
+        <button
+          type="button"
           className="top-nav-brand"
-          onClick={() => onNavigate(AppView.DASHBOARD)}
+          onClick={() => go(AppView.DASHBOARD)}
           aria-label="PriceSnap Home"
         >
           <span className="brand-mark">PS</span>
           <span className="brand-text">PriceSnap</span>
         </button>
 
-        <nav className="top-nav-links" aria-label="Main">
+        <nav className="top-nav-links top-nav-links-desktop" aria-label="Main">
           <div className="top-nav-links-scroll">
-            {MAIN_NAV.map((item) => (
-              <button
-                key={item.view}
-                type="button"
-                className={`top-nav-link${isActive(item.view, currentView) ? ' active' : ''}`}
-                onClick={() => onNavigate(item.view)}
-              >
-                {item.label}
-              </button>
-            ))}
+            {MAIN_NAV.map((item) => renderNavButton(item))}
           </div>
 
           <div className="top-nav-dropdown" ref={dropdownRef}>
@@ -105,10 +134,7 @@ export const TopNav: React.FC<Props> = ({ currentView, onNavigate, onLogout, use
                     type="button"
                     role="menuitem"
                     className={currentView === item.view ? 'active' : ''}
-                    onClick={() => {
-                      onNavigate(item.view);
-                      setSettingsOpen(false);
-                    }}
+                    onClick={() => go(item.view)}
                   >
                     {item.label}
                   </button>
@@ -123,6 +149,35 @@ export const TopNav: React.FC<Props> = ({ currentView, onNavigate, onLogout, use
           <button type="button" className="top-nav-logout" onClick={onLogout}>Logout</button>
         </div>
       </div>
+
+      {mobileOpen && (
+        <>
+          <button
+            type="button"
+            className="top-nav-overlay"
+            aria-label="Close menu"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside className="top-nav-drawer" role="dialog" aria-modal="true" aria-label="Navigation">
+            <div className="top-nav-drawer-header">
+              <div>
+                <div className="top-nav-drawer-user">{userName}</div>
+                <div className="top-nav-drawer-sub">Signed in</div>
+              </div>
+              <button type="button" className="top-nav-drawer-close" onClick={() => setMobileOpen(false)} aria-label="Close">×</button>
+            </div>
+            <nav className="top-nav-drawer-nav">
+              <p className="top-nav-drawer-section">Workspace</p>
+              {MAIN_NAV.map((item) => renderNavButton(item, 'top-nav-drawer-link'))}
+              <p className="top-nav-drawer-section">Settings</p>
+              {SETTINGS_NAV.map((item) => renderNavButton(item, 'top-nav-drawer-link'))}
+            </nav>
+            <div className="top-nav-drawer-footer">
+              <button type="button" className="btn btn-secondary btn-block" onClick={onLogout}>Sign out</button>
+            </div>
+          </aside>
+        </>
+      )}
     </header>
   );
 };

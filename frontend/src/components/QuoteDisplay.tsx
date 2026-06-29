@@ -183,7 +183,7 @@ export const QuoteDisplay: React.FC<Props> = ({
 
   return (
     <div>
-      <div className="flex gap-3 mb-6" style={{ flexWrap: 'wrap' }}>
+      <div className="flex gap-3 mb-6 quote-toolbar" style={{ flexWrap: 'wrap' }}>
         <button type="button" className="btn btn-secondary" onClick={() => onSetView(isInternal ? AppView.CUSTOMER_QUOTE : AppView.INTERNAL_QUOTE)}>
           {isInternal ? 'Customer View' : 'Internal View'}
         </button>
@@ -252,7 +252,7 @@ export const QuoteDisplay: React.FC<Props> = ({
       )}
 
       <div className="card mb-6" style={{ borderTop: `4px solid ${companyInfo.primaryColor}` }}>
-        <div className="flex justify-between" style={{ marginBottom: 24 }}>
+        <div className="quote-doc-header flex justify-between" style={{ marginBottom: 24 }}>
           <div>
             {companyInfo.logoUrl && <img src={companyInfo.logoUrl} alt="" style={{ maxHeight: 48, marginBottom: 8 }} />}
             <h2 style={{ fontWeight: 800, color: companyInfo.primaryColor }}>{companyInfo.companyName}</h2>

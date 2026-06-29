@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PriceSnap - Smart Quote Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <style>
+:root{--font-family-sans:'Inter',system-ui,-apple-system,sans-serif;--color-primary-50:#eff6ff;--color-primary-400:#60a5fa;--color-primary-500:#3b82f6;--color-primary-600:#0066ff;--color-gray-25:#fafafa;--color-gray-50:#f9fafb;--color-gray-600:#4b5563;--color-gray-800:#1f2937;--color-surface:#fff;--color-border-light:#e5e7eb;--color-text-primary:#111827;--color-text-secondary:#6b7280;--color-primary:#0066ff;--color-danger:#ef4444;--color-success:#059669;--color-success-bg:#f0fdf4;--color-success-dark:#047857;--space-xs:4px;--space-sm:8px;--space-4:16px;--space-6:24px;--space-8:32px;--radius-md:8px;--radius-lg:12px;--radius-2xl:16px;--shadow-2xl:0 25px 50px -12px rgba(0,0,0,.15);--sidebar-width:260px;--bg-app:#f3f4f6;--bg-card:#fff;--bg-sidebar:linear-gradient(180deg,#0f172a 0%,#1e293b 100%)}
+[data-theme=dark]{--color-surface:#1e293b;--color-border-light:#334155;--color-text-primary:#f1f5f9;--color-text-secondary:#94a3b8;--color-gray-25:#1e293b;--color-gray-50:#0f172a;--bg-app:#0f172a;--bg-card:#1e293b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-family-sans);background:var(--bg-app);color:var(--color-text-primary);line-height:1.5;-webkit-font-smoothing:antialiased}
+.hidden{display:none!important}
+.app-layout{display:flex;flex-direction:column;min-height:100vh}
+.app-main{flex:1;display:flex;flex-direction:column}
+.top-nav{background:var(--bg-card);border-bottom:1px solid var(--color-border-light);position:sticky;top:0;z-index:200;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.top-nav-inner{display:flex;align-items:center;gap:16px;padding:0 24px;max-width:1400px;margin:0 auto;min-height:56px}
+.top-nav-brand{background:none;border:none;cursor:pointer;font:inherit;display:flex;align-items:center;gap:8px;flex-shrink:0;margin-right:8px}
+.brand-mark{background:var(--color-primary);color:#fff;font-weight:800;font-size:12px;padding:4px 8px;border-radius:6px}
+.brand-text{font-weight:800;font-size:1.1rem;background:linear-gradient(135deg,var(--color-primary-600),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.top-nav-links{display:flex;align-items:center;gap:4px;flex:1;min-width:0}
+.top-nav-links-scroll{display:flex;align-items:center;gap:2px;flex:1;min-width:0;overflow-x:auto}
+.top-nav-link{background:none;border:none;padding:8px 12px;font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;border-radius:var(--radius-md);white-space:nowrap}
+.top-nav-link:hover{color:var(--color-text-primary);background:var(--color-gray-50)}
+.top-nav-link.active{color:var(--color-primary);background:var(--color-primary-50);font-weight:600}
+.top-nav-dropdown{position:relative;flex-shrink:0;margin-left:4px}
+.top-nav-dropdown-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--bg-card);border:1px solid var(--color-border-light);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.12);min-width:180px;z-index:500;padding:6px}
+.top-nav-dropdown-menu button{display:block;width:100%;text-align:left;padding:10px 14px;border:none;background:none;font-size:13px;cursor:pointer;border-radius:6px;color:var(--color-text-primary)}
+.top-nav-dropdown-menu button:hover{background:var(--color-gray-50)}
+.top-nav-user{display:flex;align-items:center;gap:12px;flex-shrink:0;font-size:13px;color:var(--color-text-secondary)}
+.top-nav-logout{background:none;border:1px solid var(--color-border-light);padding:6px 12px;border-radius:var(--radius-md);font-size:12px;font-weight:600;cursor:pointer;color:var(--color-text-primary)}
+.app-footer{text-align:center;padding:16px 24px;font-size:12px;color:var(--color-text-secondary);border-top:1px solid var(--color-border-light);background:var(--bg-card)}
+.view-heading{font-size:1.5rem;font-weight:700;margin-bottom:4px}
+.view-subheading{color:var(--color-text-secondary);font-size:.95rem}
+.team-card{text-align:center}
+.team-avatar{width:56px;height:56px;border-radius:50%;background:var(--color-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin:0 auto}
+.content-area{flex:1}
+.page-content{padding:32px 40px}
+.card{background:var(--bg-card);border:1px solid var(--color-border-light);border-radius:var(--radius-lg);padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--color-primary);color:#fff}
+.btn-primary:hover{background:#0052cc}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--color-gray-50);color:var(--color-text-primary);border:1px solid var(--color-border-light)}
+.btn-secondary:hover{background:#e5e7eb}
+.btn-danger{background:var(--color-danger);color:#fff}
+.btn-success{background:var(--color-success);color:#fff}
+.btn-sm{padding:6px 12px;font-size:12px}
+.form-group{margin-bottom:20px}
+.form-label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.form-input,.form-textarea,.form-select{width:100%;padding:10px 14px;border:1px solid var(--color-border-light);border-radius:var(--radius-md);font-size:14px;background:var(--bg-card);color:var(--color-text-primary);font-family:inherit}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(0,102,255,.15)}
+.form-textarea{min-height:120px;resize:vertical}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat-card{background:var(--bg-card);border:1px solid var(--color-border-light);border-radius:var(--radius-lg);padding:20px}
+.stat-value{font-size:1.75rem;font-weight:700;color:var(--color-primary)}
+.stat-label{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--color-border-light)}
+.table th{font-size:12px;font-weight:600;text-transform:uppercase;color:var(--color-text-secondary);background:var(--color-gray-50)}
+.alert{padding:14px 18px;border-radius:var(--radius-md);display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.alert-error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.alert-success{background:var(--color-success-bg);color:var(--color-success-dark);border:1px solid #bbf7d0}
+.alert-info{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe}
+.flex{display:flex}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}
+.gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}.mb-4{margin-bottom:16px}.mb-6{margin-bottom:24px}.text-center{text-align:center}
+.discount-badge{display:inline-block;background:var(--color-success);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+.price-strikethrough{text-decoration:line-through;color:var(--color-text-secondary);font-size:.85em}
+.savings-summary{background:var(--color-success-bg);border:2px solid var(--color-success);border-radius:var(--radius-lg);padding:20px;text-align:center;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(5,150,105,.2)}50%{box-shadow:0 0 0 8px rgba(5,150,105,0)}}
+.discount-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:16px;background:var(--color-gray-50);border-radius:var(--radius-md);margin-bottom:16px}
+.quote-table-wrapper{overflow-x:auto}
+.upload-zone{border:2px dashed var(--color-border-light);border-radius:var(--radius-lg);padding:40px;text-align:center;cursor:pointer;transition:all .2s}
+.upload-zone:hover{border-color:var(--color-primary);background:var(--color-primary-50)}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.badge-draft{background:#f3f4f6;color:#374151}
+.badge-sent{background:#dbeafe;color:#1d4ed8}
+.badge-approved{background:#d1fae5;color:#065f46}
+.badge-rejected{background:#fee2e2;color:#991b1b}
+.badge-completed{background:#e0e7ff;color:#3730a3}
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--color-primary-50) 0%,var(--color-gray-50) 50%,var(--color-primary-50) 100%);padding:20px;position:relative;overflow:hidden}
+.auth-screen::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 25% 25%,rgba(59,130,246,.15) 0%,transparent 50%),radial-gradient(circle at 75% 75%,rgba(59,130,246,.1) 0%,transparent 50%);pointer-events:none}
+.auth-card{background:var(--bg-card);border-radius:var(--radius-2xl);padding:0;width:100%;max-width:480px;box-shadow:var(--shadow-2xl);border:1px solid var(--color-border-light);overflow:hidden;position:relative;z-index:1}
+.auth-card-inner{padding:40px}
+.auth-header{padding:32px 32px 24px;text-align:center;background:linear-gradient(135deg,var(--color-surface) 0%,var(--color-gray-25) 100%);border-bottom:1px solid var(--color-border-light)}
+.auth-logo{text-align:center;font-size:2rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.auth-subtitle{text-align:center;color:var(--color-text-secondary);font-size:14px;margin-bottom:28px}
+.auth-tabs{display:flex;gap:8px;margin-bottom:24px}
+.auth-tab{flex:1;padding:10px;border:none;background:var(--color-gray-50);border-radius:var(--radius-md);cursor:pointer;font-weight:600;font-size:14px;color:var(--color-text-secondary)}
+.auth-tab.active{background:var(--color-primary);color:#fff}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.manual-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--color-border-light)}
+.manual-list{max-height:300px;overflow-y:auto}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;margin:0 auto 12px}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--color-border-light);background:var(--color-gray-50);font-size:12px;font-weight:600;cursor:pointer}
+.chip:hover{border-color:var(--color-primary);background:var(--color-primary-50)}
+.chip.active{background:var(--color-primary-50);border-color:var(--color-primary);color:var(--color-primary)}
+.match-preview{background:var(--color-primary-50);border:1px solid var(--color-primary-400);border-radius:var(--radius-md);padding:16px;margin-top:12px}
+.mobile-menu-btn{display:none;background:none;border:none;font-size:24px;cursor:pointer;padding:8px;margin-right:4px;vertical-align:middle;color:inherit}
+.sidebar.open{transform:translateX(0)}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+.sidebar-overlay.open{display:block}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:200}
+.modal-content{background:var(--bg-card);border-radius:var(--radius-lg);padding:32px;max-width:400px;width:90%;box-shadow:var(--shadow-2xl)}
+.loading-overlay{display:flex;align-items:center;justify-content:center;padding:40px;gap:12px;color:var(--color-text-secondary)}
+.loading-spinner{width:24px;height:24px;border:3px solid var(--color-border-light);border-top-color:var(--color-primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.slide-up{animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.desktop-quote-table{display:block}
+.mobile-quote-cards{display:none}
+.quote-card{border:1px solid var(--color-border-light);border-radius:var(--radius-md);padding:16px;margin-bottom:12px}
+.status-badge-header{display:inline-block;padding:4px 10px;border-radius:var(--radius-md);font-size:12px;font-weight:600;color:#fff;background:var(--color-primary)}
+@media(max-width:768px){
+  .top-nav-inner{padding:0 12px;gap:8px}
+  .top-nav-user span:first-child{display:none}
+  .page-content{padding:20px 16px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .btn,.chip{min-height:44px}
+  .desktop-quote-table{display:none}
+  .mobile-quote-cards{display:block}
+}
+.landing{min-height:100vh;background:var(--bg-card);color:var(--color-text-primary)}
+.landing-header{border-bottom:1px solid var(--color-border-light);background:rgba(255,255,255,.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.landing-header-inner,.landing-section-inner,.landing-hero-inner,.landing-cta-inner{max-width:1080px;margin:0 auto;padding:0 32px}
+.landing-header-inner{display:flex;align-items:center;justify-content:space-between;min-height:64px}
+.landing-logo{display:flex;align-items:center;gap:10px}
+.landing-header-nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.landing-link{background:none;border:none;font-size:14px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;padding:8px 12px}
+.landing-btn-ghost{background:none;border:none;font-size:14px;font-weight:600;padding:10px 18px;cursor:pointer;border-radius:999px;color:var(--color-text-primary)}
+.landing-btn-primary{background:var(--color-primary);color:#fff;border:none;font-size:14px;font-weight:600;padding:10px 20px;border-radius:999px;cursor:pointer}
+.landing-btn-secondary{background:var(--bg-card);color:var(--color-text-primary);border:1px solid var(--color-border-light);font-size:14px;font-weight:600;padding:10px 20px;border-radius:999px;cursor:pointer}
+.landing-btn-lg{padding:14px 28px;font-size:15px}
+.landing-hero{padding:96px 0 80px;text-align:center;background:linear-gradient(180deg,var(--color-gray-50) 0%,var(--bg-card) 100%)}
+.landing-eyebrow{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-primary);margin-bottom:16px}
+.landing-headline{font-size:clamp(2.25rem,5vw,3.5rem);font-weight:700;letter-spacing:-.03em;line-height:1.08;max-width:820px;margin:0 auto 20px}
+.landing-subhead{font-size:1.125rem;color:var(--color-text-secondary);max-width:560px;margin:0 auto 36px;line-height:1.6}
+.landing-hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.landing-demo-hint{font-size:13px;color:var(--color-text-secondary)}
+.landing-features,.landing-compare{padding:80px 0}
+.landing-section-title{font-size:1.75rem;font-weight:700;text-align:center;margin-bottom:48px}
+.landing-feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.landing-feature-card{padding:32px;border-radius:16px;border:1px solid var(--color-border-light);background:var(--bg-card)}
+.landing-feature-card h3{font-size:1.1rem;font-weight:600;margin-bottom:10px}
+.landing-feature-card p{font-size:15px;color:var(--color-text-secondary);line-height:1.55}
+.landing-compare{background:var(--color-gray-50)}
+.landing-compare-grid{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.landing-compare-row{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:16px 20px;background:var(--bg-card);border-radius:12px;border:1px solid var(--color-border-light);font-size:14px}
+.landing-compare-old{color:var(--color-text-secondary);text-decoration:line-through}
+.landing-compare-arrow{color:var(--color-primary);font-weight:600}
+.landing-compare-new{font-weight:600}
+.landing-cta{padding:80px 32px;text-align:center;background:var(--color-text-primary);color:#fff}
+.landing-cta h2{font-size:2rem;font-weight:700;margin-bottom:12px}
+.landing-cta p{color:rgba(255,255,255,.7);margin-bottom:28px}
+.preset-row{display:flex;flex-wrap:wrap;gap:10px}
+.preset-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--color-border-light);border-radius:999px;background:var(--bg-card);cursor:pointer;font:inherit}
+.preset-chip span:first-child,.preset-chip span:nth-child(2){width:16px;height:16px;border-radius:50%;display:inline-block}
+.preset-label{font-size:12px;font-weight:600}
+.logo-placeholder{width:120px;height:64px;border:1px dashed var(--color-border-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--color-text-secondary)}
+.auth-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:300;min-height:100vh}
+.auth-modal-overlay .auth-card{max-height:90vh;overflow-y:auto}
+@media(max-width:768px){.landing-feature-grid{grid-template-columns:1fr}.landing-compare-row{grid-template-columns:1fr;text-align:center}.landing-compare-arrow{display:none}.landing-hero{padding:64px 0 48px}}
+  </style>
+</head>
+<body>
+<script type="module">
+  import * as semantic from './semanticMatcher.js';
+  import * as claude from './claudeMatcher.js';
+  window.__PS_SEMANTIC = semantic;
+  window.__PS_CLAUDE = claude;
+</script>
+<div id="landing-screen" class="landing">
+  <header class="landing-header">
+    <div class="landing-header-inner">
+      <div class="landing-logo"><span class="brand-mark">PS</span><span class="brand-text">PriceSnap</span></div>
+      <nav class="landing-header-nav" id="landing-nav-guest">
+        <button type="button" class="landing-link" id="landing-help">How it works</button>
+        <button type="button" class="landing-btn-ghost" id="landing-signin">Sign in</button>
+        <button type="button" class="landing-btn-primary" id="landing-get-started">Get started</button>
+      </nav>
+      <nav class="landing-header-nav hidden" id="landing-nav-app">
+        <button type="button" class="landing-btn-primary" id="landing-back-app">Back to app</button>
+      </nav>
+    </div>
+  </header>
+  <section class="landing-hero">
+    <div class="landing-hero-inner">
+      <p class="landing-eyebrow">Built for field sales teams</p>
+      <h1 class="landing-headline">Quotes that move as fast as your conversation.</h1>
+      <p class="landing-subhead">PriceSnap turns a customer description into an accurate, branded quote — with margins, tax, and PDF ready before they leave the showroom.</p>
+      <div class="landing-hero-actions" id="landing-hero-guest">
+        <button type="button" class="landing-btn-primary landing-btn-lg" id="landing-get-started-2">Get started</button>
+        <button type="button" class="landing-btn-secondary landing-btn-lg" id="landing-signin-2">Sign in</button>
+      </div>
+      <div class="landing-hero-actions hidden" id="landing-hero-app">
+        <button type="button" class="landing-btn-primary landing-btn-lg" id="landing-open-workspace">Open workspace</button>
+        <button type="button" class="landing-btn-secondary landing-btn-lg" id="landing-new-quote">New quote</button>
+      </div>
+      <p class="landing-demo-hint" id="landing-hint-guest">No credit card · Works offline · Upload your own price list</p>
+      <p class="landing-demo-hint hidden" id="landing-hint-app">You are signed in — return anytime from Settings</p>
+    </div>
+  </section>
+  <section class="landing-features">
+    <div class="landing-section-inner">
+      <h2 class="landing-section-title">Everything reps need. Nothing they don’t.</h2>
+      <div class="landing-feature-grid">
+        <article class="landing-feature-card"><h3>Describe, don’t data-entry</h3><p>Type what your customer needs in plain language. PriceSnap maps it to your catalog in seconds.</p></article>
+        <article class="landing-feature-card"><h3>Margin-aware quoting</h3><p>Switch to internal view for cost, profit, and tax — negotiate with confidence, not guesswork.</p></article>
+        <article class="landing-feature-card"><h3>Customer-ready in one click</h3><p>Branded PDFs, financing options, and promotions — polished output without the polish work.</p></article>
+      </div>
+    </div>
+  </section>
+  <section class="landing-compare">
+    <div class="landing-section-inner">
+      <h2 class="landing-section-title">Leave the spreadsheet behind.</h2>
+      <div class="landing-compare-grid">
+        <div class="landing-compare-row"><span class="landing-compare-old">Ctrl+F across spreadsheets</span><span class="landing-compare-arrow">→</span><span class="landing-compare-new">One catalog, instant match</span></div>
+        <div class="landing-compare-row"><span class="landing-compare-old">Re-type every line item</span><span class="landing-compare-arrow">→</span><span class="landing-compare-new">Natural language → multi-line quote</span></div>
+        <div class="landing-compare-row"><span class="landing-compare-old">No margin visibility</span><span class="landing-compare-arrow">→</span><span class="landing-compare-new">Profit &amp; tax built in</span></div>
+        <div class="landing-compare-row"><span class="landing-compare-old">Hours to onboard</span><span class="landing-compare-arrow">→</span><span class="landing-compare-new">Upload .xlsx and go</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="landing-cta" id="landing-cta-guest">
+    <div class="landing-cta-inner">
+      <h2>Start quoting in minutes.</h2>
+      <p>Create an account, upload your price list, and turn customer requests into branded quotes.</p>
+      <button type="button" class="landing-btn-primary landing-btn-lg" id="landing-get-started-3">Create account</button>
+    </div>
+  </section>
+  <section class="landing-cta hidden" id="landing-cta-app">
+    <div class="landing-cta-inner">
+      <h2>Ready to quote?</h2>
+      <p>Jump back into your workspace and keep selling.</p>
+      <button type="button" class="landing-btn-primary landing-btn-lg" id="landing-return-workspace">Return to workspace</button>
+    </div>
+  </section>
+  <footer class="landing-footer"><p>© 2025 PriceSnap. All rights reserved.</p></footer>
+</div>
+<div id="auth-screen" class="auth-modal-overlay hidden">
+  <div class="auth-card fade-in">
+    <div class="auth-header">
+      <div class="auth-logo">PriceSnap</div>
+      <p class="auth-subtitle" id="auth-subtitle">Welcome back</p>
+    </div>
+    <div class="auth-card-inner">
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-auth-tab="login">Sign In</button>
+      <button class="auth-tab" data-auth-tab="signup">Sign Up</button>
+      <button class="auth-tab" data-auth-tab="help">Help</button>
+    </div>
+    <div id="auth-error" class="alert alert-error mb-4 hidden"></div>
+    <form id="login-form">
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="login-email" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="login-password" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Sign In</button>
+    </form>
+    <form id="signup-form" class="hidden">
+      <div class="form-group"><label class="form-label">Display Name</label><input class="form-input" id="signup-name" required></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="signup-email" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="signup-password" minlength="6" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Create Account</button>
+    </form>
+    <div id="help-form" class="hidden">
+      <h3 style="margin-bottom:16px;font-weight:600">Getting Started</h3>
+      <div style="font-size:14px;color:var(--color-text-secondary);line-height:1.7">
+        <p><strong>1. Load price list</strong> — Upload Excel (Item, Price, Cost) or use the optional sample catalog on New Quote.</p>
+        <p style="margin-top:8px"><strong>2. Describe your quote</strong> — Type what the customer needs, then tap Identify Items.</p>
+        <p style="margin-top:8px"><strong>3. Review & send</strong> — Preview matches, apply discounts, export PDF.</p>
+      </div>
+      <button type="button" class="btn btn-primary" id="help-back" style="margin-top:24px;width:100%">Back to Sign In</button>
+    </div>
+    </div>
+  </div>
+</div>
+<div id="app" class="app-layout hidden">
+  <header class="top-nav" id="top-nav"></header>
+  <div class="app-main">
+    <main class="content-area">
+      <div class="page-content fade-in" id="page-content"></div>
+    </main>
+    <footer class="app-footer">© 2025 PriceSnap. All rights reserved.</footer>
+  </div>
+</div>
+<script>
+(function(){
+'use strict';
+
+const SAMPLE_PRICE_LIST = [
+  {Item:"Cub Signature 7'",Price:19525,Cost:12000},
+  {Item:'SpaBoy Salt Water System',Price:2825,Cost:1500},
+  {Item:'SpaBoy Starter Kit (Spa)',Price:149.99,Cost:75},
+  {Item:'Hot Tub Delivery Local',Price:799,Cost:400},
+  {Item:'Hot Tub Installation Standard',Price:2500,Cost:1200},
+  {Item:'Extended Warranty 3 Year',Price:1299,Cost:400},
+  {Item:'Starter Chemical Kit',Price:199,Cost:80},
+  {Item:'Cover Lifter',Price:449,Cost:220},
+  {Item:'Filter Cartridge Set',Price:89,Cost:35},
+  {Item:'Premium Headrest Set',Price:249,Cost:100}
+];
+
+const MAIN_NAV=[
+  {view:'DASHBOARD',label:'Home'},
+  {view:'INPUT_FORM',label:'New Quote'},
+  {view:'CUSTOMERS',label:'Customers'},
+  {view:'ANALYTICS',label:'Analytics'},
+  {view:'INVENTORY',label:'Inventory'},
+  {view:'PROMOTIONS',label:'Promotions'},
+  {view:'FINANCING',label:'Financing'},
+  {view:'FILES',label:'Files'},
+  {view:'TEAM',label:'Team'}
+];
+const COLOR_PRESETS=[
+  {name:'Bold Red',primary:'#a31f37',secondary:'#000000'},
+  {name:'Professional Blue',primary:'#0066FF',secondary:'#8B5CF6'},
+  {name:'Ocean Teal',primary:'#0D9488',secondary:'#06B6D4'},
+  {name:'Forest Green',primary:'#059669',secondary:'#10B981'},
+  {name:'Sunset Orange',primary:'#EA580C',secondary:'#F59E0B'},
+  {name:'Classic Navy',primary:'#1E3A5F',secondary:'#3B82F6'}
+];
+const SETTINGS_NAV=[
+  {view:'PROFILE',label:'Profile'},
+  {view:'COMPANY_BRANDING',label:'Branding'},
+  {view:'PRICE_LISTS',label:'Price Lists'},
+  {view:'SETTINGS',label:'Preferences'},
+  {view:'SUBSCRIPTION',label:'Subscription'},
+  {view:'MARKETING',label:'Marketing site'}
+];
+const SUBSCRIPTION_PLANS=[
+  {id:'starter',name:'Starter',priceMonthly:29,features:['50 quotes/month','1 user','PDF export']},
+  {id:'pro',name:'Professional',priceMonthly:49,features:['Unlimited quotes','5 team members','PDF export','Analytics']},
+  {id:'enterprise',name:'Enterprise',priceMonthly:99,features:['Unlimited everything','Priority support','Custom branding','API access']}
+];
+const TEAM_ROLES=['Owner / Sales','Sales Rep','Showroom Manager','Office Admin'];
+const FILES_MAX_MB=3;
+const BUNDLED_LIST_NAME='Sample Catalog';
+
+function parsePromotionsFromStorage(raw){
+  if(!raw) return [];
+  try{
+    const parsed=JSON.parse(raw);
+    if(!Array.isArray(parsed)||!parsed.length) return [];
+    if(typeof parsed[0]==='string'){
+      return parsed.map((name,i)=>({id:'migrated-'+i,name,discountPct:10,validUntil:'',description:'',active:true,createdAt:new Date().toISOString()}));
+    }
+    return parsed;
+  }catch{return [];}
+}
+function activePromotionNames(promotions){return promotions.filter(p=>p.active).map(p=>p.name);}
+function inferFileType(name){
+  const ext=(name.split('.').pop()||'').toLowerCase();
+  if(['xlsx','xls','csv'].includes(ext)) return 'Price List';
+  if(ext==='pdf') return 'PDF';
+  if(['png','jpg','jpeg','webp'].includes(ext)) return 'Image';
+  return 'File';
+}
+
+const VIEW_TITLES = {
+  DASHBOARD:{title:'Dashboard',sub:'Overview of your quoting activity'},
+  INPUT_FORM:{title:'Create Quote',sub:'Upload a price list and generate quotes'},
+  QUOTE_HISTORY:{title:'Quote History',sub:'View and manage past quotes'},
+  PRICE_LISTS:{title:'Price Lists',sub:'Manage your product price lists'},
+  CUSTOMERS:{title:'Customers',sub:'Manage your customer database'},
+  COMPANY_BRANDING:{title:'Branding',sub:'Customize your company appearance'},
+  SETTINGS:{title:'Settings',sub:'App preferences and defaults'},
+  PROFILE:{title:'Profile',sub:'Your account settings'},
+  CUSTOMER_QUOTE:{title:'Quote',sub:'Customer-facing quote view'},
+  INTERNAL_QUOTE:{title:'Quote (Internal)',sub:'Internal view with profit margins'}
+};
+
+const DISCOUNT_PRESETS = [5,10,15,20,25];
+const DISCOUNT_REASONS = ['Volume Discount','Seasonal Sale','Loyalty Discount','Custom Offer'];
+
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}},
+  set(k,v){localStorage.setItem(k,JSON.stringify(v));}
+};
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+
+function initDefaults(){
+  if(!store.get('ps_company')){
+    store.set('ps_company',{
+      companyName:'',companyAddress:'',
+      companyContact:'',website:'',
+      taxNumber:'',logoUrl:'',primaryColor:'#0066FF',secondaryColor:'#8B5CF6'
+    });
+  }
+  if(!store.get('ps_terms')){
+    store.set('ps_terms','Payment due within 30 days of invoice date.\nQuote valid for 30 days.\nAll prices in CAD.');
+  }
+  if(!store.get('ps_quotes')) store.set('ps_quotes',[]);
+  if(!store.get('ps_customers')) store.set('ps_customers',[]);
+  if(!store.get('ps_users')) store.set('ps_users',[]);
+  if(!store.get('ps_price_lists')) store.set('ps_price_lists',[]);
+}
+
+const state = {
+  view:'INPUT_FORM',user:null,quotes:[],customers:[],priceLists:[],preferredListId:null,
+  activePriceList:null,userInput:'',customerName:'',customerEmail:'',customerPhone:'',customerAddress:'',
+  adjustmentText:'',draftLines:[],matchMessage:'',
+  promotionRecords:[],financingOptions:[],teamMembers:[],storedFiles:[],
+  subscriptionPlanId:'pro',billingEmail:'',
+  currentQuote:null,editMode:true,showDiscounts:false,discountPct:10,discountReason:'Volume Discount',
+  quoteFinancing:'',quoteDeposit:'',quoteFinancingDisplay:'both',
+  historySearch:'',customerForm:null,settingsOpen:false,
+  promoForm:null,financingForm:null,teamForm:null,
+  inventorySearch:'',inventorySort:'name',analyticsFilter:'all',
+  filesError:'',filesUploading:false,subscriptionSaved:false,
+  matchLoading:false,showLogoutConfirm:false,marketingPreview:false
+};
+
+function loadState(){
+  initDefaults();
+  state.quotes=store.get('ps_quotes',[]);
+  state.customers=store.get('ps_customers',[]);
+  state.priceLists=store.get('ps_price_lists',[]);
+  state.preferredListId=store.get('ps_preferred_list',null);
+  const pl=state.priceLists.find(p=>p.id===state.preferredListId);
+  state.activePriceList=pl?pl.data:null;
+  state.user=store.get('ps_user',null);
+  state.promotionRecords=parsePromotionsFromStorage(localStorage.getItem('ps_promotions'));
+  try{
+    const rawPromo=localStorage.getItem('ps_promotions');
+    if(rawPromo){const parsed=JSON.parse(rawPromo);if(Array.isArray(parsed)&&parsed.length&&typeof parsed[0]==='string') savePromotions();}
+  }catch{}
+  state.financingOptions=store.get('ps_financing',[]);
+  state.teamMembers=store.get('ps_team',[]);
+  state.storedFiles=store.get('ps_files',[]);
+  state.subscriptionPlanId=store.get('ps_subscription','pro');
+  state.billingEmail=store.get('ps_billing_email',state.user?.email||'');
+  const theme=store.get('ps_theme','light');
+  document.documentElement.setAttribute('data-theme',theme);
+}
+
+function saveQuotes(){store.set('ps_quotes',state.quotes);}
+function saveCustomers(){store.set('ps_customers',state.customers);}
+function savePriceLists(){store.set('ps_price_lists',state.priceLists);}
+function savePromotions(){store.set('ps_promotions',state.promotionRecords);}
+function saveFinancing(){store.set('ps_financing',state.financingOptions);}
+function saveTeam(){store.set('ps_team',state.teamMembers);}
+function saveFiles(){store.set('ps_files',state.storedFiles);}
+function saveSubscription(){store.set('ps_subscription',state.subscriptionPlanId);store.set('ps_billing_email',state.billingEmail);}
+function getActiveFinancingLabels(){
+  const active=state.financingOptions.filter(o=>o.active);
+  return active.length?active.map(o=>o.name):['No financing options configured'];
+}
+function saveCompany(info){store.set('ps_company',info);}
+function getCompany(){return store.get('ps_company',{});}
+function getTerms(){return store.get('ps_terms','');}
+
+async function matchQuoteItemsAI(input,priceList){
+  if(!priceList?.length) throw new Error('Load a price list first.');
+  if(!input?.trim()) throw new Error('Describe the items you need.');
+  const claudeKey=store.get('ps_anthropic_api_key','');
+  if(claudeKey&&window.__PS_CLAUDE){
+    return window.__PS_CLAUDE.matchQuoteItemsAI(input,priceList,claudeKey);
+  }
+  const AI=window.__PS_SEMANTIC;
+  if(!AI?.matchQuoteItemsAI) throw new Error('AI matcher failed to load. Refresh the page.');
+  return AI.matchQuoteItemsAI(input,priceList);
+}
+
+function buildLine(item,qty,pl){
+  const p=pl.find(x=>x.Item===item)||{Item:item,Price:0,Cost:0};
+  const tp=p.Price*qty,tc=p.Cost*qty,profit=tp-tc;
+  return{Item:p.Item,Price:p.Price,Cost:p.Cost,Quantity:qty,TotalPrice:tp,TotalCost:tc,Profit:profit,ProfitMargin:tp>0?(profit/tp)*100:0};
+}
+function recalcTotals(lines){
+  const overallTotalPrice=lines.reduce((s,l)=>s+l.TotalPrice,0);
+  const overallTotalCost=lines.reduce((s,l)=>s+l.TotalCost,0);
+  const overallProfit=overallTotalPrice-overallTotalCost;
+  return{overallTotalPrice,overallTotalCost,overallProfit,overallProfitMargin:overallTotalPrice>0?(overallProfit/overallTotalPrice)*100:0};
+}
+function applyBulkDiscount(lines,pct,reason){
+  return lines.map(line=>{
+    const orig=line.originalPrice??line.Price;
+    const disc=orig*(1-pct/100),tp=disc*line.Quantity,tc=line.Cost*line.Quantity,profit=tp-tc;
+    return{...line,originalPrice:orig,Price:disc,discountPercentage:pct,discountReason:reason,
+      discountAmount:(orig-disc)*line.Quantity,TotalPrice:tp,TotalCost:tc,Profit:profit,ProfitMargin:tp>0?(profit/tp)*100:0};
+  });
+}
+function calcSavings(lines){return lines.reduce((s,l)=>l.originalPrice&&l.originalPrice>l.Price?s+(l.originalPrice-l.Price)*l.Quantity:s,0);}
+function hasDiscounts(lines){return lines.some(l=>(l.discountPercentage??0)>0);}
+
+function createQuote(lines,customerName){
+  const totals=recalcTotals(lines);
+  const cust=state.customers.find(c=>c.name===customerName);
+  return{id:uid(),createdAt:new Date().toISOString(),customerName:customerName||undefined,
+    customerId:cust?.id,status:'Draft',lines,version:1,...totals};
+}
+
+function exportPdf(quote,company,terms){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const savings=calcSavings(quote.lines);
+  doc.setFontSize(20);doc.setTextColor(0,102,255);doc.text(company.companyName,14,20);
+  doc.setFontSize(10);doc.setTextColor(80,80,80);
+  doc.text(company.companyAddress,14,28);
+  doc.text(company.companyContact+' | '+company.website,14,34);
+  doc.setFontSize(16);doc.setTextColor(0,0,0);doc.text('Quote',14,48);
+  doc.setFontSize(10);
+  doc.text('Date: '+new Date(quote.createdAt).toLocaleDateString(),14,56);
+  if(quote.customerName) doc.text('Customer: '+quote.customerName,14,62);
+  doc.text('Status: '+quote.status,14,68);
+  doc.text('Quote ID: '+quote.id.slice(0,8)+' (v'+quote.version+')',14,74);
+  const rows=quote.lines.map(l=>{
+    const orig=l.originalPrice??l.Price;
+    const hd=l.discountPercentage&&l.discountPercentage>0;
+    const unit=hd?'$'+orig.toFixed(2)+' → $'+l.Price.toFixed(2)+' ('+l.discountPercentage+'% off)':'$'+l.Price.toFixed(2);
+    return[l.Item,String(l.Quantity),unit,'$'+l.TotalPrice.toFixed(2)];
+  });
+  doc.autoTable({startY:82,head:[['Item','Qty','Unit Price','Total']],body:rows,theme:'striped',headStyles:{fillColor:[0,102,255]}});
+  const fy=doc.lastAutoTable?.finalY??120;
+  if(savings>0){doc.setTextColor(5,150,105);doc.setFontSize(11);doc.text('Total Savings: $'+savings.toFixed(2),14,fy+10);}
+  doc.setTextColor(0,0,0);doc.setFontSize(12);
+  doc.text('Subtotal: $'+quote.overallTotalPrice.toFixed(2),140,fy+20,{align:'right'});
+  doc.text('Total: $'+quote.overallTotalPrice.toFixed(2),140,fy+28,{align:'right'});
+  if(terms){doc.setFontSize(8);doc.text('Terms & Conditions',14,fy+40);doc.text(doc.splitTextToSize(terms,180),14,fy+46);}
+  doc.save('quote-'+quote.id.slice(0,8)+'.pdf');
+}
+
+function parseExcel(file,cb){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const sheet=wb.Sheets[wb.SheetNames[0]];
+      const json=XLSX.utils.sheet_to_json(sheet);
+      const parsed=json.map(r=>({Item:String(r.Item||'').trim(),Price:parseFloat(r.Price)||0,Cost:parseFloat(r.Cost)||0})).filter(r=>r.Item);
+      cb(parsed);
+    }catch(err){alert('Failed to parse file: '+err.message);}
+  };
+  reader.readAsBinaryString(file);
+}
+
+function loadBundledSamplePriceList(silent){
+  const applyCatalog=(parsed)=>{
+    const existing=state.priceLists.find(p=>p.name===BUNDLED_LIST_NAME);
+    if(existing){
+      existing.data=parsed;existing.itemCount=parsed.length;existing.uploadDate=new Date().toISOString();
+      savePriceLists();
+    } else {
+      const pl={id:uid(),name:BUNDLED_LIST_NAME,uploadDate:new Date().toISOString(),itemCount:parsed.length,data:parsed};
+      state.priceLists.push(pl);savePriceLists();
+    }
+    state.preferredListId=state.priceLists.find(p=>p.name===BUNDLED_LIST_NAME)?.id||state.priceLists[state.priceLists.length-1].id;
+    store.set('ps_preferred_list',state.preferredListId);
+    state.activePriceList=parsed;
+    if(!silent) render();
+  };
+  return fetch('sample-price-list.json')
+    .then(r=>r.ok?r.json():Promise.reject())
+    .then(parsed=>{if(!Array.isArray(parsed)||!parsed.length)throw new Error('Empty');applyCatalog(parsed);})
+    .catch(()=>{applyCatalog(SAMPLE_PRICE_LIST);});
+}
+
+function ensureSamplePriceList(){
+  const bundled=state.priceLists.find(p=>p.name===BUNDLED_LIST_NAME);
+  const truncated=bundled&&bundled.itemCount<10;
+  if(!bundled||truncated) return loadBundledSamplePriceList(true);
+  if(!state.activePriceList){
+    const pl=state.priceLists.find(p=>p.id===state.preferredListId)||bundled;
+    if(pl){state.preferredListId=pl.id;state.activePriceList=pl.data;store.set('ps_preferred_list',pl.id);}
+  }
+  return Promise.resolve();
+}
+
+function duplicateQuote(q){
+  const copy=JSON.parse(JSON.stringify(q));
+  copy.id=uid();copy.createdAt=new Date().toISOString();copy.status='Draft';copy.version=1;
+  state.quotes.unshift(copy);saveQuotes();state.currentQuote=copy;state.view='CUSTOMER_QUOTE';render();
+}
+
+function copyQuoteSummary(q){
+  const lines=q.lines.map(l=>`• ${l.Item} x${l.Quantity} — ${fmt(l.TotalPrice)}`).join('\n');
+  const text=`Quote for ${q.customerName||'Customer'}\n${lines}\n\nTotal: ${fmt(q.overallTotalPrice)}`;
+  navigator.clipboard.writeText(text).then(()=>alert('Quote copied to clipboard'));
+}
+
+function confirmPendingQuote(){
+  if(!state.pendingMatch?.length) return;
+  const lines=state.pendingMatch.map(m=>buildLine(m.Item,m.Quantity,state.activePriceList));
+  const quote=createQuote(lines,state.customerName);
+  state.quotes.unshift(quote);saveQuotes();state.currentQuote=quote;state.pendingMatch=null;
+  state.view='CUSTOMER_QUOTE';state.editMode=false;state.showDiscounts=false;render();
+}
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function fmt(n){return '$'+n.toFixed(2);}
+function badgeClass(s){return 'badge badge-'+s.toLowerCase();}
+
+function getTemplates(){return store.get('ps_templates',[]);}
+function saveTemplates(t){store.set('ps_templates',t);}
+function saveQuoteTemplate(name,lines){
+  const userInput=lines.map(l=>l.Item).join(', ');
+  const templates=getTemplates().filter(t=>t.name!==name);
+  templates.unshift({id:uid(),name,userInput,createdAt:new Date().toISOString()});
+  saveTemplates(templates.slice(0,20));
+  alert('Template "'+name+'" saved.');
+}
+
+function getRecentCustomers(){
+  const counts=new Map();
+  state.quotes.forEach(q=>{if(q.customerName) counts.set(q.customerName,(counts.get(q.customerName)||0)+1);});
+  state.customers.forEach(c=>{if(c.name) counts.set(c.name,(counts.get(c.name)||0)+1);});
+  return [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,6).map(([n])=>n);
+}
+
+function renderTopNav(){
+  const settingsActive=SETTINGS_NAV.some(s=>s.view===state.view);
+  const quoteViews=state.view==='CUSTOMER_QUOTE'||state.view==='INTERNAL_QUOTE';
+  const links=MAIN_NAV.map(n=>{
+    const active=n.view===state.view||(n.view==='INPUT_FORM'&&quoteViews);
+    return `<button type="button" class="top-nav-link${active?' active':''}" data-nav="${n.view}">${n.label}</button>`;
+  }).join('');
+  const settingsMenu=state.settingsOpen?`<div class="top-nav-dropdown-menu" id="settings-menu" role="menu">${SETTINGS_NAV.map(s=>`<button type="button" role="menuitem" data-nav="${s.view}">${s.label}</button>`).join('')}</div>`:'';
+  document.getElementById('top-nav').innerHTML=`<div class="top-nav-inner">
+  <button type="button" class="top-nav-brand" data-nav="DASHBOARD"><span class="brand-mark">PS</span><span class="brand-text">PriceSnap</span></button>
+  <nav class="top-nav-links"><div class="top-nav-links-scroll">${links}</div>
+  <div class="top-nav-dropdown"><button type="button" class="top-nav-link${settingsActive?' active':''}${state.settingsOpen?' open':''}" id="settings-toggle">Settings <span class="top-nav-chevron">▾</span></button>${settingsMenu}</div>
+  </nav>
+  <div class="top-nav-user"><span>Welcome, ${esc(state.user.displayName)}</span><button type="button" class="top-nav-logout" id="top-logout">Logout</button></div></div>`;
+}
+
+function renderDashboard(){
+  const total=state.quotes.reduce((s,q)=>s+q.overallTotalPrice,0);
+  const drafts=state.quotes.filter(q=>q.status==='Draft').length;
+  const recent=state.quotes.slice(0,5);
+  return `<p style="margin-bottom:24px;color:var(--color-text-secondary)">Welcome back, ${esc(state.user.displayName)}!</p>
+  <div class="grid-4 mb-6">
+    <div class="stat-card"><div class="stat-value">${state.quotes.length}</div><div class="stat-label">Total Quotes</div></div>
+    <div class="stat-card"><div class="stat-value">${fmt(total).replace('.00','')}</div><div class="stat-label">Total Value</div></div>
+    <div class="stat-card"><div class="stat-value">${drafts}</div><div class="stat-label">Drafts</div></div>
+    <div class="stat-card"><div class="stat-value">${state.quotes.length?Math.round(total/state.quotes.length):0}</div><div class="stat-label">Avg Quote Value</div></div>
+  </div>
+  <div class="flex gap-3 mb-6" style="flex-wrap:wrap">
+    <button class="btn btn-primary" data-nav="INPUT_FORM">+ New Quote</button>
+    <button class="btn btn-secondary" data-nav="QUOTE_HISTORY">View History</button>
+    ${!state.activePriceList?'<button class="btn btn-secondary" id="dash-load-list">Load Sample Catalog</button>':''}
+  </div>
+  <div class="card"><h3 style="margin-bottom:16px;font-weight:600">Recent Quotes</h3>
+  ${recent.length?`<table class="table"><thead><tr><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>
+  ${recent.map(q=>`<tr><td>${esc(q.customerName||'—')}</td><td>${new Date(q.createdAt).toLocaleDateString()}</td><td>${q.lines.length}</td><td>${fmt(q.overallTotalPrice)}</td><td><span class="${badgeClass(q.status)}">${q.status}</span></td><td><button type="button" class="btn btn-secondary btn-sm" data-dash-open-quote="${q.id}">Open</button></td></tr>`).join('')}
+  </tbody></table>`:'<p style="color:var(--color-text-secondary)">No quotes yet. Create your first quote!</p>'}
+  </div>`;
+}
+
+function renderInputForm(){
+  const pl=state.activePriceList;
+  const promoNames=activePromotionNames(state.promotionRecords);
+  const opts=state.priceLists.map(p=>`<option value="${p.id}"${p.id===state.preferredListId?' selected':''}>${esc(p.name)} (${p.itemCount} items)</option>`).join('');
+  const promoSelect=(val,i)=>`<select class="form-select" style="min-width:120px;padding:4px 8px" data-draft-promo="${i}"><option value="">None</option>${promoNames.map(p=>`<option value="${esc(p)}"${p===(val||'')?' selected':''}>${esc(p)}</option>`).join('')}</select>`;
+  const rows=state.draftLines.map((line,i)=>`<tr>
+  <td>${esc(line.Item)}</td><td><input type="number" min="1" class="form-input" style="width:64px;padding:4px 8px" data-draft-qty="${i}" value="${line.Quantity}"></td>
+  <td>${fmt(line.Price)}</td>
+  <td><input type="number" class="form-input" style="width:88px;padding:4px 8px" data-draft-price="${i}" value="${(line.originalPrice??line.Price).toFixed(2)}"></td>
+  <td>${promoSelect(line.promotion,i)}</td>
+  <td>${fmt(line.TotalPrice)}</td></tr>`).join('');
+  return `<div style="max-width:960px;margin:0 auto">
+  <h2 class="view-heading">Create New Quote</h2>
+  <div class="card mb-6"><div class="flex gap-3 items-end" style="flex-wrap:wrap">
+  <div class="form-group" style="flex:1;min-width:220px;margin-bottom:0"><label class="form-label">Select Price List</label>
+  <select class="form-select" id="select-price-list"><option value="">Select price list...</option>${opts}</select></div>
+  <button type="button" class="btn btn-secondary" id="upload-trigger">Upload New</button>
+  <input type="file" id="file-create" accept=".xlsx,.xls" hidden></div>
+  ${pl?`<p style="margin-top:12px;font-size:13px;color:var(--color-success)">✓ ${pl.length} items loaded</p>`:`<p style="margin-top:12px;font-size:13px;color:var(--color-danger)">No price list loaded. <button type="button" class="btn btn-secondary btn-sm" id="load-sample-catalog">Load Sample Catalog</button></p>`}
+  </div>
+  <div class="card mb-6"><h3 style="margin-bottom:16px;font-weight:600">Customer Information</h3><div class="grid-2">
+  <div class="form-group"><label class="form-label">Customer Name</label><input class="form-input" list="customer-suggestions" id="customer-name" value="${esc(state.customerName)}"></div>
+  <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="customer-email" value="${esc(state.customerEmail)}"></div>
+  <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="customer-phone" value="${esc(state.customerPhone)}"></div>
+  <div class="form-group"><label class="form-label">Address</label><input class="form-input" id="customer-address" value="${esc(state.customerAddress)}"></div></div>
+  <datalist id="customer-suggestions">${state.customers.map(c=>`<option value="${esc(c.name)}">`).join('')}</datalist></div>
+  <div class="card mb-6"><h3 style="margin-bottom:16px;font-weight:600">Describe Items</h3>
+  <textarea class="form-textarea" id="quote-input" rows="4" placeholder="e.g. cub sig, spaboy, spaboy starter">${esc(state.userInput)}</textarea>
+  <button type="button" class="btn btn-primary" style="margin-top:12px" id="identify-items" ${!pl||state.matchLoading?'disabled':''}>${state.matchLoading?'AI matching...':'Identify Items (AI)'}</button>
+  ${state.matchMessage?`<p style="margin-top:8px;font-size:13px;color:var(--color-text-secondary)">${esc(state.matchMessage)}</p>`:''}</div>
+  <div class="card mb-6"><h3 style="margin-bottom:16px;font-weight:600">PriceSnap Adjustments</h3>
+  <textarea class="form-textarea" id="adjustment-input" rows="3" placeholder="e.g. apply 10% volume discount">${esc(state.adjustmentText)}</textarea>
+  <div class="flex gap-2" style="margin-top:12px"><button type="button" class="btn btn-secondary" id="apply-adjustment">Apply Changes</button>
+  <button type="button" class="btn btn-secondary" id="describe-changes">Describe Changes</button></div></div>
+  ${state.draftLines.length?`<div class="card mb-6"><h3 style="margin-bottom:16px;font-weight:600">Quote Items</h3>
+  <div class="quote-table-wrapper"><table class="table"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>New Price</th><th>Promotion</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <button type="button" class="btn btn-primary" style="margin-top:16px;width:100%" id="create-quote-btn">Create Quote</button></div>`:''}
+  </div>`;
+}
+
+function renderQuoteDisplay(){
+  const q=state.currentQuote,co=getCompany(),terms=getTerms();
+  const isInt=state.view==='INTERNAL_QUOTE';
+  const savings=calcSavings(q.lines);
+  const anyDisc=hasDiscounts(q.lines);
+  const promoNames=activePromotionNames(state.promotionRecords);
+  const financingLabels=getActiveFinancingLabels();
+  if(!state.quoteFinancing||!financingLabels.includes(state.quoteFinancing)) state.quoteFinancing=financingLabels[0];
+  const financingPanel=state.editMode?`<div class="card mb-6"><h3 style="margin-bottom:12px;font-weight:600">Financing Options</h3>
+  <select class="form-select" style="max-width:400px;margin-bottom:12px" id="quote-financing">${financingLabels.map(o=>`<option${o===state.quoteFinancing?' selected':''}>${esc(o)}</option>`).join('')}</select>
+  <div class="form-group" style="max-width:240px"><label class="form-label">Deposit Amount</label>
+  <input class="form-input" type="number" min="0" id="quote-deposit" value="${esc(state.quoteDeposit)}" placeholder="0.00"></div>
+  <div class="flex gap-4" style="margin-top:12px;flex-wrap:wrap">
+  ${['total','payments','both'].map(mode=>`<label style="display:flex;align-items:center;gap:6px;font-size:14px">
+  <input type="radio" name="financing-display" value="${mode}"${state.quoteFinancingDisplay===mode?' checked':''}> ${mode==='total'?'Total Only':mode==='payments'?'Payments Only':'Both'}</label>`).join('')}
+  </div></div>`:'';
+  const toolbar=state.showDiscounts?`<div class="discount-toolbar card mb-6"><span style="font-weight:600">Apply discount:</span>
+  ${DISCOUNT_PRESETS.map(p=>`<button class="btn btn-sm ${state.discountPct===p?'btn-primary':'btn-secondary'}" data-disc-pct="${p}">${p}%</button>`).join('')}
+  <select class="form-select" style="width:auto" id="disc-reason">${DISCOUNT_REASONS.map(r=>`<option${r===state.discountReason?' selected':''}>${r}</option>`).join('')}</select>
+  <button class="btn btn-success btn-sm" id="apply-discount">Apply to All Items</button>
+  ${anyDisc?'<button class="btn btn-danger btn-sm" id="remove-discount">Remove Discounts</button>':''}</div>`:'';
+  const rows=q.lines.map((line,i)=>{
+    const hd=(line.discountPercentage??0)>0,orig=line.originalPrice??line.Price;
+    const ls=hd?(orig-line.Price)*line.Quantity:0;
+    const promoCell=state.editMode?`<select class="form-select" style="min-width:120px;padding:4px 8px" data-line-promo="${i}"><option value="">None</option>${promoNames.map(p=>`<option value="${esc(p)}"${p===(line.promotion||'')?' selected':''}>${esc(p)}</option>`).join('')}</select>`:(line.promotion||'—');
+    return `<tr><td>${esc(line.Item)}</td><td>${line.Quantity}</td><td>
+    ${hd?`<div class="price-strikethrough">${fmt(orig)}</div>`:''}
+    ${state.editMode?`<input type="number" class="form-input" style="width:80px;padding:4px" data-edit-price="${i}" value="${line.Price.toFixed(2)}">`:`<span>${fmt(line.Price)}</span>`}
+    ${hd?`<span class="discount-badge" style="margin-left:8px">${line.discountPercentage}% OFF</span>`:''}</td>
+    <td>${promoCell}</td>
+    ${!isInt&&anyDisc?`<td class="discount-badge">${fmt(ls)}</td>`:''}
+    <td>${fmt(line.TotalPrice)}</td>${isInt?`<td>${fmt(line.Profit)} (${line.ProfitMargin.toFixed(1)}%)</td>`:''}</tr>`;
+  }).join('');
+  const mobileCards=q.lines.map((line,i)=>{
+    const hd=(line.discountPercentage??0)>0,orig=line.originalPrice??line.Price;
+    return `<div class="quote-card"><div style="font-weight:600">${esc(line.Item)}</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-top:4px">Qty: ${line.Quantity}</div>
+    <div style="margin-top:8px">${hd?`<span class="price-strikethrough">${fmt(orig)} </span>`:''}<strong>${fmt(line.Price)}</strong>
+    ${hd?`<span class="discount-badge" style="margin-left:8px">${line.discountPercentage}% OFF</span>`:''}</div>
+    <div style="margin-top:4px;font-weight:600">Total: ${fmt(line.TotalPrice)}</div></div>`;
+  }).join('');
+  return `<div class="flex gap-3 mb-6" style="flex-wrap:wrap">
+  <button class="btn btn-secondary" id="toggle-view">${isInt?'Customer View':'Internal View'}</button>
+  <button class="btn btn-secondary" id="toggle-edit">${state.editMode?'Done Editing':'Edit Mode'}</button>
+  <button class="btn btn-secondary" id="toggle-discounts">Quick Discounts</button>
+  <button class="btn btn-primary" id="export-pdf">Export PDF</button>
+  <button class="btn btn-secondary" id="copy-quote">Copy Summary</button>
+  <button class="btn btn-secondary" id="save-template">Save Template</button>
+  <button class="btn btn-secondary" id="new-quote">New Quote</button>
+  <select class="form-select" style="width:auto" id="quote-status">${['Draft','Sent','Approved','Rejected','Completed'].map(s=>`<option${s===q.status?' selected':''}>${s}</option>`).join('')}</select></div>
+  ${financingPanel}
+  ${toolbar}
+  <div class="card mb-6" style="border-top:4px solid ${co.primaryColor}">
+  <div class="flex justify-between" style="margin-bottom:24px"><div>
+  <h2 style="font-weight:800;color:${co.primaryColor}">${esc(co.companyName)}</h2>
+  <p style="font-size:13px;color:var(--color-text-secondary)">${esc(co.companyAddress)}</p>
+  <p style="font-size:13px">${esc(co.companyContact)} | ${esc(co.website)}</p></div>
+  <div style="text-align:right"><div style="font-size:20px;font-weight:700">QUOTE</div>
+  <div style="font-size:13px;color:var(--color-text-secondary)">${new Date(q.createdAt).toLocaleDateString()}</div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">ID: ${esc(q.id.slice(0,8))} · v${q.version}</div>
+  ${q.customerName?`<div style="margin-top:4px">To: <strong>${esc(q.customerName)}</strong></div>`:''}</div></div>
+  <div class="quote-table-wrapper desktop-quote-table"><table class="table"><thead><tr>
+  <th>Item</th><th>Qty</th><th>Unit Price</th><th>Promotion</th>${!isInt&&anyDisc?'<th>Savings</th>':''}<th>Total</th>${isInt?'<th>Profit</th>':''}
+  </tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="mobile-quote-cards">${mobileCards}</div>
+  ${savings>0&&!isInt?`<div class="savings-summary" style="margin-top:24px">
+  <div style="font-size:20px;font-weight:700;color:var(--color-success)">🎉 Your Savings Summary</div>
+  <div style="font-size:28px;font-weight:800;color:var(--color-success-dark);margin-top:8px">${fmt(savings)}</div>
+  <div style="font-size:14px;color:var(--color-success-dark)">Total savings on this quote!</div></div>`:''}
+  <div style="margin-top:24px;text-align:right"><div style="font-size:13px;color:var(--color-text-secondary)">Subtotal</div>
+  <div style="font-size:20px;font-weight:600">${fmt(q.overallTotalPrice)}</div>
+  ${isInt?`<div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary)">Tax (13%)</div>
+  <div style="font-size:18px;font-weight:600">${fmt(q.overallTotalPrice*0.13)}</div>
+  <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary)">Revenue (incl. tax)</div>
+  <div style="font-size:24px;font-weight:700;color:var(--color-primary)">${fmt(q.overallTotalPrice*1.13)}</div>
+  <div style="margin-top:12px;padding:16px;background:var(--color-success-bg);border-radius:8px;display:inline-block;text-align:left">
+  <div style="font-size:13px">Total Cost: ${fmt(q.overallTotalCost)}</div>
+  <div style="font-size:16px;font-weight:700;color:var(--color-success);margin-top:4px">Profit: ${fmt(q.overallProfit)} (${q.overallProfitMargin.toFixed(1)}%)</div></div>`:''}</div>
+  ${terms?`<div style="margin-top:24px;padding:16px;background:var(--color-gray-50);border-radius:8px;font-size:12px;white-space:pre-wrap">${esc(terms)}</div>`:''}
+  </div>`;
+}
+
+function renderHistory(){
+  const filtered=state.quotes.filter(q=>!state.historySearch||(q.customerName||'').toLowerCase().includes(state.historySearch.toLowerCase()));
+  return `<div class="form-group" style="max-width:400px">
+  <input class="form-input" id="history-search" placeholder="Search by customer name..." value="${esc(state.historySearch)}"></div>
+  <div class="card">${filtered.length?`<table class="table"><thead><tr>
+  <th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Profit</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+  ${filtered.map(q=>`<tr><td>${esc(q.customerName||'—')}</td><td>${new Date(q.createdAt).toLocaleDateString()}</td><td>${q.lines.length}</td>
+  <td>${fmt(q.overallTotalPrice)}</td><td>${fmt(q.overallProfit)} (${q.overallProfitMargin.toFixed(1)}%)</td>
+  <td><span class="${badgeClass(q.status)}">${q.status}</span></td>
+  <td class="flex gap-2"><button class="btn btn-primary btn-sm" data-view-quote="${q.id}">View</button>
+  <button class="btn btn-secondary btn-sm" data-duplicate-quote="${q.id}">Duplicate</button>
+  <button class="btn btn-danger btn-sm" data-delete-quote="${q.id}">Delete</button></td></tr>`).join('')}
+  </tbody></table>`:'<p style="color:var(--color-text-secondary)">No quotes found.</p>'}</div>`;
+}
+
+function renderPriceLists(){
+  const lists=state.priceLists;
+  return `<div class="flex gap-3 mb-6" style="flex-wrap:wrap">
+  <button class="btn btn-primary" id="load-2026-list">Load Sample Catalog</button>
+  </div>
+  <div class="upload-zone mb-6" id="upload-zone-lists"><p style="font-size:32px;margin-bottom:8px">📁</p>
+  <p style="font-weight:600">Upload Price List</p>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-top:4px">Excel file with Item, Price, Cost columns</p>
+  <input type="file" id="file-lists" accept=".xlsx,.xls,.csv" hidden></div>
+  <div class="card"><h3 style="margin-bottom:16px;font-weight:600">Your Price Lists</h3>
+  ${lists.length?`<table class="table"><thead><tr><th>Name</th><th>Items</th><th>Uploaded</th><th>Preferred</th><th>Actions</th></tr></thead><tbody>
+  ${lists.map(pl=>`<tr><td>${esc(pl.name)}</td><td>${pl.itemCount}</td><td>${new Date(pl.uploadDate).toLocaleDateString()}</td>
+  <td>${state.preferredListId===pl.id?'⭐ Yes':'—'}</td><td class="flex gap-2">
+  <button class="btn btn-secondary btn-sm" data-pref-list="${pl.id}">Set Preferred</button>
+  <button class="btn btn-danger btn-sm" data-del-list="${pl.id}">Delete</button></td></tr>`).join('')}
+  </tbody></table>`:'<p style="color:var(--color-text-secondary)">No price lists uploaded yet.</p>'}</div>`;
+}
+
+function renderCustomers(){
+  const cf=state.customerForm;
+  const formHtml=cf?`<div class="card mb-6"><h3 style="margin-bottom:16px">${cf.id?'Edit Customer':'New Customer'}</h3>
+  <form id="customer-form"><div class="grid-2">
+  <div class="form-group"><label class="form-label">Name *</label><input class="form-input" name="name" value="${esc(cf.name)}" required></div>
+  <div class="form-group"><label class="form-label">Company</label><input class="form-input" name="company" value="${esc(cf.company)}"></div>
+  <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" name="email" value="${esc(cf.email)}"></div>
+  <div class="form-group"><label class="form-label">Phone</label><input class="form-input" name="phone" value="${esc(cf.phone)}"></div></div>
+  <div class="form-group"><label class="form-label">Address</label><input class="form-input" name="address" value="${esc(cf.address)}"></div>
+  <div class="flex gap-2"><button type="submit" class="btn btn-primary">${cf.id?'Update':'Add'} Customer</button>
+  <button type="button" class="btn btn-secondary" id="cancel-customer">Cancel</button></div></form></div>`:'';
+  return `${!cf?'<button class="btn btn-primary mb-6" id="add-customer">+ Add Customer</button>':''}${formHtml}
+  <div class="card">${state.customers.length?`<table class="table"><thead><tr>
+  <th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Quotes</th><th>Actions</th></tr></thead><tbody>
+  ${state.customers.map(c=>{const qc=state.quotes.filter(q=>q.customerId===c.id).length;
+  return `<tr><td>${esc(c.name)}</td><td>${esc(c.company||'—')}</td><td>${esc(c.email||'—')}</td><td>${esc(c.phone||'—')}</td><td>${qc}</td>
+  <td class="flex gap-2"><button class="btn btn-secondary btn-sm" data-edit-customer="${c.id}">Edit</button>
+  <button class="btn btn-danger btn-sm" data-del-customer="${c.id}">Delete</button></td></tr>`;}).join('')}
+  </tbody></table>`:'<p style="color:var(--color-text-secondary)">No customers yet.</p>'}</div>`;
+}
+
+function renderBranding(){
+  const co=getCompany();
+  const presets=COLOR_PRESETS.map(p=>`<button type="button" class="preset-chip" data-brand-preset="${esc(p.name)}" title="${esc(p.name)}"><span style="background:${p.primary}"></span><span style="background:${p.secondary}"></span><span class="preset-label">${esc(p.name)}</span></button>`).join('');
+  const logoHtml=co.logoUrl?`<img src="${esc(co.logoUrl)}" alt="Company logo" style="max-height:64px;max-width:160px;object-fit:contain;border:1px solid var(--color-border-light);border-radius:8px;padding:8px">`:'<div class="logo-placeholder">No logo</div>';
+  return `<div style="max-width:720px"><h2 class="view-heading">Company Branding</h2><p class="view-subheading" style="margin-bottom:24px">Customize your company's branding to make quotes look more professional and personalized.</p>
+  <div class="card mb-6"><h3 style="margin-bottom:20px;font-weight:600">Company Details</h3>
+  <div class="form-group"><label class="form-label">Company Name</label><input class="form-input" data-co="companyName" value="${esc(co.companyName)}"></div>
+  <div class="form-group"><label class="form-label">Address</label><input class="form-input" data-co="companyAddress" value="${esc(co.companyAddress)}"></div>
+  <div class="grid-2"><div class="form-group"><label class="form-label">Contact Email</label><input class="form-input" data-co="companyContact" value="${esc(co.companyContact)}"></div>
+  <div class="form-group"><label class="form-label">Website</label><input class="form-input" data-co="website" value="${esc(co.website)}"></div></div>
+  <div class="form-group"><label class="form-label">Tax Number</label><input class="form-input" data-co="taxNumber" value="${esc(co.taxNumber)}"></div></div>
+  <div class="card mb-6"><h3 style="margin-bottom:16px;font-weight:600">Logo</h3>
+  <div class="flex gap-4 items-center" style="flex-wrap:wrap">${logoHtml}
+  <div><button type="button" class="btn btn-secondary" id="brand-logo-upload">Upload Logo</button>
+  <input type="file" id="brand-logo-file" accept="image/*" hidden>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin-top:8px">Or paste a URL below</p></div></div>
+  <div class="form-group" style="margin-top:16px;margin-bottom:0"><input class="form-input" data-co="logoUrl" value="${esc(co.logoUrl||'')}" placeholder="https://... or upload above"></div></div>
+  <div class="card"><h3 style="margin-bottom:16px;font-weight:600">Brand Colors</h3>
+  <div class="grid-2"><div class="form-group"><label class="form-label">Primary Color</label>
+  <div class="flex gap-2 items-center"><input type="color" data-co-color="primaryColor" value="${co.primaryColor}">
+  <input class="form-input" data-co="primaryColor" value="${co.primaryColor}"></div></div>
+  <div class="form-group"><label class="form-label">Secondary Color</label>
+  <div class="flex gap-2 items-center"><input type="color" data-co-color="secondaryColor" value="${co.secondaryColor}">
+  <input class="form-input" data-co="secondaryColor" value="${co.secondaryColor}"></div></div></div>
+  <p style="font-size:13px;font-weight:600;margin-top:8px;margin-bottom:12px">Preset Color Schemes</p>
+  <div class="preset-row">${presets}</div>
+  <div id="brand-preview" style="margin-top:24px;padding:24px;border-radius:12px;background:linear-gradient(135deg,${co.primaryColor},${co.secondaryColor});color:#fff;text-align:center">
+  ${co.logoUrl?`<img src="${esc(co.logoUrl)}" alt="" style="max-height:40px;margin-bottom:8px;object-fit:contain">`:''}
+  <div style="font-size:24px;font-weight:800">${esc(co.companyName)}</div><div style="font-size:13px;opacity:.9;margin-top:4px">Brand Preview</div></div></div></div>`;
+}
+
+function renderSettings(){
+  const u=state.user;
+  return `<div class="grid-2"><div class="card"><h3 style="margin-bottom:16px;font-weight:600">Account</h3>
+  <div class="form-group"><label class="form-label">Display Name</label><input class="form-input" id="settings-name" value="${esc(u.displayName)}"></div>
+  <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="${esc(u.email)}" disabled></div>
+  <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="settings-company" value="${esc(u.company||'')}"></div></div>
+  <div class="card"><h3 style="margin-bottom:16px;font-weight:600">Appearance</h3>
+  <button class="btn btn-secondary" id="toggle-theme">Toggle Dark/Light Theme</button>
+  <p style="margin-top:12px;font-size:13px;color:var(--color-text-secondary)">Add your Claude API key below for professional-quality matching. Without a key, local AI is used as fallback.</p></div>
+  <div class="card" style="grid-column:1/-1"><h3 style="margin-bottom:16px;font-weight:600">Claude AI (recommended)</h3>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">Paste your Anthropic API key. Stored locally in your browser only. Get one at console.anthropic.com</p>
+  <div class="form-group"><label class="form-label">Claude API Key</label>
+  <input class="form-input" type="password" id="settings-anthropic-key" placeholder="sk-ant-..." value="${esc(store.get('ps_anthropic_api_key',''))}" autocomplete="off">
+  <p style="margin-top:8px;font-size:12px;color:var(--color-text-secondary)">Requires Node.js installed for the local Claude proxy (restart the app after installing Node). Without Node, use the full stack: start.bat with backend/.env</p></div>
+  <div class="card" style="grid-column:1/-1"><h3 style="margin-bottom:16px;font-weight:600">Default Quote Terms</h3>
+  <textarea class="form-textarea" id="default-terms" rows="8">${esc(getTerms())}</textarea></div></div>`;
+}
+
+function renderProfile(){
+  const u=state.user;
+  return `<div class="card" style="max-width:480px"><div style="text-align:center;margin-bottom:24px">
+  <div class="profile-avatar">${u.displayName.charAt(0).toUpperCase()}</div>
+  <h2 style="font-weight:700">${esc(u.displayName)}</h2><p style="color:var(--color-text-secondary)">${esc(u.email)}</p></div>
+  <div class="form-group"><label class="form-label">Display Name</label><input class="form-input" id="profile-name" value="${esc(u.displayName)}"></div>
+  <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="profile-company" value="${esc(u.company||'')}"></div>
+  <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="profile-phone" value="${esc(u.phone||'')}"></div>
+  <button class="btn btn-danger" style="width:100%;margin-top:16px" id="profile-logout">Sign Out</button></div>`;
+}
+
+function renderTeam(){
+  const totalRev=state.quotes.reduce((s,q)=>s+q.overallTotalPrice,0);
+  const totalProfit=state.quotes.reduce((s,q)=>s+q.overallProfit,0);
+  const tf=state.teamForm;
+  const formHtml=tf?`<div class="card" style="margin-top:24px;max-width:520px"><h3 style="margin-bottom:16px;font-weight:600">${tf.editingId?'Edit Member':'Invite Team Member'}</h3>
+  <form id="team-form"><div class="form-group"><label class="form-label">Name</label><input class="form-input" name="name" value="${esc(tf.name)}" required></div>
+  <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" name="email" value="${esc(tf.email)}" required></div>
+  <div class="form-group"><label class="form-label">Role</label><select class="form-select" name="role">${TEAM_ROLES.map(r=>`<option${r===tf.role?' selected':''}>${esc(r)}</option>`).join('')}</select></div>
+  <div class="flex gap-2"><button type="submit" class="btn btn-primary">${tf.editingId?'Save':'Send Invite'}</button>
+  <button type="button" class="btn btn-secondary" id="team-form-cancel">Cancel</button></div></form></div>`:'';
+  const cards=state.teamMembers.map(m=>`<div class="card team-card"><div class="team-avatar">${esc(m.name.charAt(0))}</div>
+  <h3 style="font-weight:700;margin-top:12px">${esc(m.name)}</h3><p style="font-size:13px;color:var(--color-text-secondary)">${esc(m.role)}</p>
+  <p style="font-size:13px;margin-top:8px">${esc(m.email)}</p>
+  <span class="badge badge-${m.status==='Active'?'approved':'draft'}" style="margin-top:12px">${esc(m.status)}</span>
+  <div class="flex gap-2" style="margin-top:16px;justify-content:center;flex-wrap:wrap">
+  <button type="button" class="btn btn-secondary btn-sm" data-edit-team="${m.id}">Edit</button>
+  ${m.status==='Invited'?`<button type="button" class="btn btn-success btn-sm" data-activate-team="${m.id}">Activate</button>`:''}
+  <button type="button" class="btn btn-danger btn-sm" data-del-team="${m.id}">Remove</button></div></div>`).join('');
+  return `<h2 class="view-heading">Team Management</h2><p class="view-subheading">Manage team members and track performance</p>
+  <div class="grid-4" style="margin-top:24px">
+  <div class="stat-card"><div class="stat-value">${state.teamMembers.length}</div><div class="stat-label">Team Members</div></div>
+  <div class="stat-card"><div class="stat-value">${state.quotes.length}</div><div class="stat-label">Total Quotes</div></div>
+  <div class="stat-card"><div class="stat-value">$${Math.round(totalRev).toLocaleString()}</div><div class="stat-label">Total Revenue</div></div>
+  <div class="stat-card"><div class="stat-value">$${Math.round(totalProfit).toLocaleString()}</div><div class="stat-label">Total Profit</div></div></div>
+  ${formHtml}
+  <div class="grid-3" style="margin-top:24px">${cards}
+  <button type="button" class="card team-card" id="team-invite-btn" style="border-style:dashed;cursor:pointer;background:var(--bg-card);text-align:center">
+  <div style="font-size:32px;margin-bottom:8px">+</div><h3 style="font-weight:600">Invite Team Member</h3>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-top:8px">Add a salesperson to your workspace</p></button></div>`;
+}
+function renderPromotions(){
+  const pf=state.promoForm||{editingId:null,name:'',discount:'10',validUntil:'',description:''};
+  const rows=state.promotionRecords.map(p=>`<tr><td><strong>${esc(p.name)}</strong>${p.description?`<div style="font-size:12px;color:var(--color-text-secondary)">${esc(p.description)}</div>`:''}</td>
+  <td>${p.discountPct}%</td><td>${p.validUntil?new Date(p.validUntil).toLocaleDateString():'—'}</td>
+  <td><button type="button" class="badge badge-${p.active?'approved':'draft'}" style="border:none;cursor:pointer" data-toggle-promo="${p.id}">${p.active?'Active':'Inactive'}</button></td>
+  <td class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" data-edit-promo="${p.id}">Edit</button>
+  <button type="button" class="btn btn-danger btn-sm" data-del-promo="${p.id}">Delete</button></td></tr>`).join('');
+  return `<div style="max-width:900px"><h2 class="view-heading">Promotions</h2><p class="view-subheading">Create and manage promotional offers for quotes</p>
+  <div class="card" style="margin-top:24px"><h3 style="margin-bottom:16px;font-weight:600">${pf.editingId?'Edit Promotion':'Create Promotion'}</h3>
+  <form id="promo-form"><div class="form-group"><label class="form-label">Promotion Name</label>
+  <input class="form-input" name="name" value="${esc(pf.name)}" placeholder="e.g. Spring Sale" required></div>
+  <div class="grid-2"><div class="form-group"><label class="form-label">Discount %</label>
+  <input class="form-input" type="number" name="discount" min="0" max="100" value="${esc(pf.discount)}"></div>
+  <div class="form-group"><label class="form-label">Valid Until</label>
+  <input class="form-input" type="date" name="validUntil" value="${esc(pf.validUntil)}"></div></div>
+  <div class="form-group"><label class="form-label">Description</label>
+  <textarea class="form-textarea" name="description" rows="3" placeholder="Promotion details shown to your team...">${esc(pf.description)}</textarea></div>
+  <div class="flex gap-2"><button type="submit" class="btn btn-primary">${pf.editingId?'Save Changes':'Create Promotion'}</button>
+  ${pf.editingId?'<button type="button" class="btn btn-secondary" id="promo-form-cancel">Cancel</button>':''}</div></form></div>
+  <div class="card" style="margin-top:24px"><h3 style="margin-bottom:16px;font-weight:600">Active Promotions</h3>
+  ${rows?`<table class="table"><thead><tr><th>Name</th><th>Discount</th><th>Valid Until</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>`:'<p style="color:var(--color-text-secondary)">No promotions yet.</p>'}</div></div>`;
+}
+function renderAnalytics(){
+  const filter=state.analyticsFilter;
+  const filtered=filter==='all'?state.quotes:state.quotes.filter(q=>q.status.toLowerCase()===filter);
+  const total=filtered.reduce((s,q)=>s+q.overallTotalPrice,0);
+  const profit=filtered.reduce((s,q)=>s+q.overallProfit,0);
+  const avg=filtered.length?total/filtered.length:0;
+  const byStatus={};
+  state.quotes.forEach(q=>{byStatus[q.status]=(byStatus[q.status]||0)+1;});
+  const statusChips=`<button type="button" class="chip${filter==='all'?' active':''}" data-analytics-filter="all">All (${state.quotes.length})</button>`+
+  Object.entries(byStatus).map(([status,count])=>`<button type="button" class="chip${filter===status.toLowerCase()?' active':''}" data-analytics-filter="${status.toLowerCase()}">${esc(status)} (${count})</button>`).join('');
+  const recent=filtered.slice(0,15).map(q=>`<tr><td>${esc(q.customerName||'—')}</td><td>${new Date(q.createdAt).toLocaleDateString()}</td>
+  <td>${fmt(q.overallTotalPrice)}</td><td>${fmt(q.overallProfit)}</td><td><span class="${badgeClass(q.status)}">${q.status}</span></td>
+  <td><button type="button" class="btn btn-secondary btn-sm" data-view-quote="${q.id}">Open</button></td></tr>`).join('');
+  return `<div class="flex justify-between items-center" style="flex-wrap:wrap;gap:12px">
+  <div><h2 class="view-heading">Analytics</h2><p class="view-subheading">Sales performance and quote insights</p></div>
+  <div class="flex gap-2"><button type="button" class="btn btn-secondary" id="analytics-export-csv"${filtered.length?'':' disabled'}>Export CSV</button>
+  <button type="button" class="btn btn-secondary" data-nav="QUOTE_HISTORY">Quote History</button></div></div>
+  <div class="grid-4" style="margin-top:24px">
+  <div class="stat-card"><div class="stat-value">${filtered.length}</div><div class="stat-label">Quotes</div></div>
+  <div class="stat-card"><div class="stat-value">$${Math.round(total).toLocaleString()}</div><div class="stat-label">Revenue</div></div>
+  <div class="stat-card"><div class="stat-value">$${Math.round(profit).toLocaleString()}</div><div class="stat-label">Profit</div></div>
+  <div class="stat-card"><div class="stat-value">$${Math.round(avg).toLocaleString()}</div><div class="stat-label">Avg Quote</div></div></div>
+  <div class="card" style="margin-top:24px"><h3 style="margin-bottom:12px;font-weight:600">By Status</h3><div class="flex gap-2" style="flex-wrap:wrap">${statusChips}</div></div>
+  <div class="card" style="margin-top:24px"><h3 style="margin-bottom:16px;font-weight:600">Recent Activity</h3>
+  ${filtered.length?`<table class="table"><thead><tr><th>Customer</th><th>Date</th><th>Total</th><th>Profit</th><th>Status</th><th></th></tr></thead><tbody>${recent}</tbody></table>`:'<p style="color:var(--color-text-secondary)">No quote data for this filter.</p>'}</div>`;
+}
+function renderInventory(){
+  const items=state.activePriceList||[];
+  const search=state.inventorySearch.toLowerCase();
+  let filtered=items.filter(i=>!search||i.Item.toLowerCase().includes(search));
+  filtered=[...filtered].sort((a,b)=>{
+    if(state.inventorySort==='price') return b.Price-a.Price;
+    if(state.inventorySort==='margin'){
+      const ma=a.Price>0?(a.Price-a.Cost)/a.Price:0,mb=b.Price>0?(b.Price-b.Cost)/b.Price:0;
+      return mb-ma;
+    }
+    return a.Item.localeCompare(b.Item);
+  });
+  const avgMargin=items.length?items.reduce((s,i)=>s+(i.Price>0?((i.Price-i.Cost)/i.Price)*100:0),0)/items.length:0;
+  const rows=filtered.map(i=>{
+    const margin=i.Price>0?((i.Price-i.Cost)/i.Price*100):0;
+    return `<tr><td>${esc(i.Item)}</td><td>${fmt(i.Price)}</td><td>${fmt(i.Cost)}</td><td>${margin.toFixed(1)}%</td></tr>`;
+  }).join('');
+  if(!items.length) return `<h2 class="view-heading">Inventory</h2><p class="view-subheading">Product catalog from your active price list</p>
+  <div class="card" style="margin-top:24px"><p style="color:var(--color-text-secondary);margin-bottom:12px">No catalog loaded yet.</p>
+  <button type="button" class="btn btn-secondary" id="inventory-load-catalog">Load Sample Catalog</button></div>`;
+  return `<h2 class="view-heading">Inventory</h2><p class="view-subheading">Product catalog from your active price list</p>
+  <div class="grid-3" style="margin-top:24px">
+  <div class="stat-card"><div class="stat-value">${items.length}</div><div class="stat-label">SKUs</div></div>
+  <div class="stat-card"><div class="stat-value">$${Math.round(items.reduce((s,i)=>s+i.Price,0)/items.length).toLocaleString()}</div><div class="stat-label">Avg List Price</div></div>
+  <div class="stat-card"><div class="stat-value">${avgMargin.toFixed(1)}%</div><div class="stat-label">Avg Margin</div></div></div>
+  <div class="card" style="margin-top:24px"><div class="flex gap-3 mb-4" style="flex-wrap:wrap">
+  <input class="form-input" style="flex:1;min-width:200px" id="inventory-search" placeholder="Search items..." value="${esc(state.inventorySearch)}">
+  <select class="form-select" style="width:auto" id="inventory-sort">
+  <option value="name"${state.inventorySort==='name'?' selected':''}>Sort: Name</option>
+  <option value="price"${state.inventorySort==='price'?' selected':''}>Sort: Price</option>
+  <option value="margin"${state.inventorySort==='margin'?' selected':''}>Sort: Margin</option></select></div>
+  <p style="margin-bottom:12px;font-size:13px;color:var(--color-text-secondary)">Showing ${filtered.length} of ${items.length} items</p>
+  <div class="quote-table-wrapper" style="max-height:480px;overflow-y:auto">
+  <table class="table"><thead><tr><th>Item</th><th>Price</th><th>Cost</th><th>Margin</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function renderFinancing(){
+  const ff=state.financingForm;
+  const formHtml=ff?.show?`<div class="card" style="margin-top:24px;max-width:640px"><h3 style="margin-bottom:16px;font-weight:600">${ff.editingId?'Edit Option':'New Financing Option'}</h3>
+  <form id="financing-form"><div class="form-group"><label class="form-label">Display Name</label>
+  <input class="form-input" name="name" value="${esc(ff.name)}" placeholder="e.g. 36 Month — 6.99% APR" required></div>
+  <div class="grid-3"><div class="form-group"><label class="form-label">Term (months)</label>
+  <input class="form-input" type="number" name="termMonths" min="1" value="${esc(ff.termMonths)}"></div>
+  <div class="form-group"><label class="form-label">APR %</label>
+  <input class="form-input" type="number" name="apr" min="0" step="0.01" value="${esc(ff.apr)}"></div>
+  <div class="form-group"><label class="form-label">Minimum ($)</label>
+  <input class="form-input" type="number" name="minAmount" min="0" value="${esc(ff.minAmount)}"></div></div>
+  <div class="flex gap-2"><button type="submit" class="btn btn-primary">${ff.editingId?'Save':'Add Option'}</button>
+  <button type="button" class="btn btn-secondary" id="financing-form-cancel">Cancel</button></div></form></div>`:'';
+  const active=state.financingOptions.filter(o=>o.active);
+  const cards=active.length?active.map(opt=>`<div class="card"><h3 style="font-weight:700">${esc(opt.name)}</h3>
+  <div style="margin-top:12px;font-size:14px;color:var(--color-text-secondary)">
+  <p><strong>Term:</strong> ${opt.termMonths} months</p><p style="margin-top:4px"><strong>APR:</strong> ${opt.apr}%</p>
+  <p style="margin-top:4px"><strong>Minimum:</strong> $${opt.minAmount.toLocaleString()}</p></div>
+  <div class="flex gap-2" style="margin-top:16px"><button type="button" class="btn btn-secondary btn-sm" data-edit-financing="${opt.id}">Edit</button>
+  <button type="button" class="btn btn-danger btn-sm" data-del-financing="${opt.id}">Remove</button></div></div>`).join('')
+  :'<p style="color:var(--color-text-secondary)">No financing options. Add one to show on quotes.</p>';
+  return `<div class="flex justify-between items-center" style="flex-wrap:wrap;gap:12px"><div>
+  <h2 class="view-heading">Financing</h2><p class="view-subheading">Financing options available on customer quotes</p></div>
+  <button type="button" class="btn btn-primary" id="financing-add-btn">+ Add Option</button></div>
+  ${formHtml}<div class="grid-2" style="margin-top:24px">${cards}</div>`;
+}
+function renderFiles(){
+  const uploaded=state.storedFiles.map(f=>`<tr><td>${esc(f.name)}</td><td>${esc(f.type||'File')}</td>
+  <td>${(f.size/1024).toFixed(0)} KB</td><td>${new Date(f.uploadedAt).toLocaleDateString()}</td>
+  <td class="flex gap-2"><button type="button" class="btn btn-secondary btn-sm" data-download-file="${f.id}">Download</button>
+  <button type="button" class="btn btn-danger btn-sm" data-del-file="${f.id}">Delete</button></td></tr>`).join('');
+  return `<div><h2 class="view-heading">Files</h2><p class="view-subheading">Shared documents, price lists, and marketing assets</p>
+  ${state.filesError?`<div class="alert alert-error mb-4" style="margin-top:16px">${esc(state.filesError)}</div>`:''}
+  <div class="upload-zone" id="files-upload-zone" style="margin-top:24px;margin-bottom:24px;padding:32px;opacity:${state.filesUploading?0.6:1}">
+  <p style="font-weight:600">${state.filesUploading?'Uploading...':'Drop files here or click to upload'}</p>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">PDF, Excel, images — max ${FILES_MAX_MB}MB each</p>
+  <input type="file" id="files-input" multiple accept=".pdf,.xlsx,.xls,.csv,.png,.jpg,.jpeg,.webp" hidden></div>
+  <div class="card"><table class="table"><thead><tr><th>Name</th><th>Type</th><th>Size</th><th>Uploaded</th><th>Actions</th></tr></thead><tbody>
+  <tr><td>sample-price-list.json</td><td>Price List</td><td>Demo</td><td>Built-in</td>
+  <td><button type="button" class="btn btn-secondary btn-sm" id="download-sample-catalog">Download</button></td></tr>
+  ${uploaded}</tbody></table>
+  ${!state.storedFiles.length?'<p style="padding:12px 0 0;font-size:13px;color:var(--color-text-secondary)">No uploaded files yet.</p>':''}</div></div>`;
+}
+function renderSubscription(){
+  const plan=SUBSCRIPTION_PLANS.find(p=>p.id===state.subscriptionPlanId)||SUBSCRIPTION_PLANS[1];
+  const nextBill=new Date(Date.now()+30*86400000).toLocaleDateString();
+  const planCards=SUBSCRIPTION_PLANS.map(p=>`<button type="button" class="card" data-select-plan="${p.id}" style="text-align:left;cursor:pointer;border:${state.subscriptionPlanId===p.id?'2px solid var(--color-primary)':'1px solid var(--color-border-light)'};background:${state.subscriptionPlanId===p.id?'var(--color-primary-50)':'var(--bg-card)'}">
+  <strong>${esc(p.name)}</strong><p style="margin-top:8px;font-size:20px;font-weight:700;color:var(--color-primary)">$${p.priceMonthly}/mo</p></button>`).join('');
+  return `<div style="max-width:720px"><h2 class="view-heading">Subscription</h2><p class="view-subheading">Manage your PriceSnap plan and billing</p>
+  <div class="card" style="margin-top:24px;border-top:4px solid var(--color-primary)">
+  <p style="font-size:12px;font-weight:600;color:var(--color-primary);text-transform:uppercase;letter-spacing:0.05em">Current plan</p>
+  <h3 style="font-weight:700;font-size:22px;margin-top:8px">${esc(plan.name)}</h3>
+  <div style="margin-top:12px;font-size:28px;font-weight:800;color:var(--color-primary)">$${plan.priceMonthly}<span style="font-size:14px;font-weight:500">/month</span></div>
+  <ul style="margin-top:16px;font-size:14px;padding-left:20px">${plan.features.map(f=>`<li style="margin-bottom:4px">${esc(f)}</li>`).join('')}</ul></div>
+  <div class="card" style="margin-top:24px"><h3 style="margin-bottom:16px;font-weight:600">Change Plan</h3><div class="grid-3">${planCards}</div></div>
+  <div class="card" style="margin-top:24px"><h3 style="margin-bottom:16px;font-weight:600">Billing</h3>
+  <div class="form-group"><label class="form-label">Billing Email</label>
+  <input class="form-input" type="email" id="billing-email" value="${esc(state.billingEmail)}"></div>
+  <button type="button" class="btn btn-primary" id="save-billing">${state.subscriptionSaved?'Saved ✓':'Update Billing'}</button>
+  <p style="margin-top:12px;font-size:13px;color:var(--color-text-secondary)">Next billing date: ${nextBill}</p></div></div>`;
+}
+
+let _renderTimer=null;
+function captureFocus(){
+  const el=document.activeElement;
+  if(!el||el===document.body||!document.getElementById('page-content')?.contains(el)) return null;
+  return{
+    id:el.id||'',
+    draftQty:el.dataset?.draftQty||'',
+    draftPrice:el.dataset?.draftPrice||'',
+    historySearch:el.id==='history-search',
+    inventorySearch:el.id==='inventory-search',
+    selStart:el.selectionStart,
+    selEnd:el.selectionEnd
+  };
+}
+function restoreFocus(c){
+  if(!c) return;
+  let el=null;
+  if(c.id) el=document.getElementById(c.id);
+  else if(c.draftQty) el=document.querySelector(`[data-draft-qty="${c.draftQty}"]`);
+  else if(c.draftPrice) el=document.querySelector(`[data-draft-price="${c.draftPrice}"]`);
+  if(!el) return;
+  el.focus();
+  if(c.selStart!=null&&typeof el.setSelectionRange==='function'){
+    try{el.setSelectionRange(c.selStart,c.selEnd);}catch{}
+  }
+}
+function renderDebounced(ms=200){
+  clearTimeout(_renderTimer);
+  const focus=captureFocus();
+  _renderTimer=setTimeout(()=>{render();restoreFocus(focus);},ms);
+}
+
+function render(){
+  if(!state.user) return;
+  renderTopNav();
+  let html='';
+  if(state.matchLoading&&state.view==='INPUT_FORM'){
+    html='<div class="loading-overlay"><div class="loading-spinner"></div><span>AI is loading and analyzing your request... (first time may take 30s)</span></div>';
+  } else {
+  switch(state.view){
+    case 'DASHBOARD': html=renderDashboard(); break;
+    case 'INPUT_FORM': html=renderInputForm(); break;
+    case 'CUSTOMER_QUOTE': case 'INTERNAL_QUOTE': html=renderQuoteDisplay(); break;
+    case 'CUSTOMERS': html=renderCustomers(); break;
+    case 'ANALYTICS': html=renderAnalytics(); break;
+    case 'INVENTORY': html=renderInventory(); break;
+    case 'PROMOTIONS': html=renderPromotions(); break;
+    case 'FINANCING': html=renderFinancing(); break;
+    case 'FILES': html=renderFiles(); break;
+    case 'TEAM': html=renderTeam(); break;
+    case 'QUOTE_HISTORY': html=renderHistory(); break;
+    case 'PRICE_LISTS': html=renderPriceLists(); break;
+    case 'SETTINGS': html=renderSettings(); break;
+    case 'COMPANY_BRANDING': html=renderBranding(); break;
+    case 'PROFILE': html=renderProfile(); break;
+    case 'SUBSCRIPTION': html=renderSubscription(); break;
+    default: html=renderDashboard();
+  }
+  }
+  let modal='';
+  if(state.showLogoutConfirm){
+    modal=`<div class="modal-overlay" id="logout-modal"><div class="modal-content text-center">
+    <h3 style="font-size:20px;font-weight:600;margin-bottom:8px">Sign Out</h3>
+    <p style="color:var(--color-text-secondary);margin-bottom:24px">Ready to call it a day?</p>
+    <div class="flex gap-3 justify-center">
+    <button class="btn btn-secondary" id="logout-cancel">Stay Logged In</button>
+    <button class="btn btn-danger" id="logout-confirm">Sign Out</button></div></div></div>`;
+  }
+  document.getElementById('page-content').innerHTML=html+modal;
+  document.getElementById('page-content').className='page-content slide-up';
+  bindEvents();
+}
+
+function navigate(view){
+  if(view==='MARKETING'){showLandingFromApp();return;}
+  state.view=view;
+  state.settingsOpen=false;
+  if(view!=='INPUT_FORM'){state.draftLines=[];state.matchMessage='';}
+  if(view!=='CUSTOMERS') state.customerForm=null;
+  if(view!=='PROMOTIONS') state.promoForm=null;
+  if(view!=='FINANCING') state.financingForm=null;
+  if(view!=='TEAM') state.teamForm=null;
+  if(view!=='FILES'){state.filesError='';state.filesUploading=false;}
+  if(view==='INPUT_FORM'){render();return;}
+  render();
+}
+
+function updateLandingMode(fromApp){
+  ['landing-nav-guest','landing-hero-guest','landing-cta-guest','landing-hint-guest'].forEach(id=>{
+    document.getElementById(id)?.classList.toggle('hidden',fromApp);
+  });
+  ['landing-nav-app','landing-hero-app','landing-cta-app','landing-hint-app'].forEach(id=>{
+    document.getElementById(id)?.classList.toggle('hidden',!fromApp);
+  });
+}
+
+function showLanding(){
+  document.getElementById('landing-screen').classList.remove('hidden');
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('hidden');
+  if(!state.marketingPreview) updateLandingMode(false);
+}
+
+function showLandingFromApp(){
+  state.marketingPreview=true;
+  state.settingsOpen=false;
+  showLanding();
+  updateLandingMode(true);
+}
+
+function backToApp(){
+  state.marketingPreview=false;
+  updateLandingMode(false);
+  showApp();
+}
+
+function openAuth(mode){
+  document.getElementById('landing-screen').classList.remove('hidden');
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.querySelectorAll('[data-auth-tab]').forEach(t=>t.classList.remove('active'));
+  const tab=document.querySelector(`[data-auth-tab="${mode}"]`);
+  if(tab) tab.classList.add('active');
+  document.getElementById('login-form').classList.toggle('hidden',mode!=='login');
+  document.getElementById('signup-form').classList.toggle('hidden',mode!=='signup');
+  document.getElementById('help-form').classList.toggle('hidden',mode!=='help');
+  const sub=document.getElementById('auth-subtitle');
+  if(sub) sub.textContent=mode==='signup'?'Create your account':mode==='help'?'How can we help?':'Welcome back';
+  document.getElementById('auth-error').classList.add('hidden');
+}
+
+function closeAuth(){
+  document.getElementById('auth-screen').classList.add('hidden');
+}
+
+function initializeWorkspaceForUser(user){
+  const co=getCompany();
+  if(!co.companyName){
+    saveCompany({...co,companyName:user.company||'',companyContact:user.email||co.companyContact||''});
+  }
+  if(!state.teamMembers.length){
+    state.teamMembers=[{id:uid(),name:user.displayName,role:'Owner / Sales',email:user.email,status:'Active',createdAt:new Date().toISOString()}];
+    saveTeam();
+  }
+  if(!state.billingEmail) state.billingEmail=user.email||'';
+}
+
+function showApp(){
+  document.getElementById('landing-screen').classList.add('hidden');
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  state.view='DASHBOARD';
+  render();
+}
+
+function showAuth(){
+  showLanding();
+  openAuth('login');
+}
+
+function updateUser(data){
+  state.user={...state.user,...data};
+  store.set('ps_user',state.user);
+  const users=store.get('ps_users',[]);
+  const idx=users.findIndex(u=>u.email===state.user.email);
+  if(idx>=0){users[idx]={...users[idx],...data};store.set('ps_users',users);}
+}
+
+function addPriceList(name,data){
+  const pl={id:uid(),name,uploadDate:new Date().toISOString(),itemCount:data.length,data};
+  state.priceLists.push(pl);
+  savePriceLists();
+  if(!state.preferredListId){state.preferredListId=pl.id;store.set('ps_preferred_list',pl.id);}
+  state.activePriceList=data;
+  render();
+}
+
+function bindEvents(){
+  document.querySelectorAll('[data-nav]').forEach(el=>{el.onclick=()=>navigate(el.dataset.nav);});
+  const st=document.getElementById('settings-toggle');
+  if(st) st.onclick=(e)=>{e.stopPropagation();state.settingsOpen=!state.settingsOpen;render();};
+  const menu=document.getElementById('settings-menu');
+  if(menu) menu.onclick=(e)=>e.stopPropagation();
+  const tl=document.getElementById('top-logout');
+  if(tl) tl.onclick=()=>{state.showLogoutConfirm=true;render();};
+
+  if(state.view==='DASHBOARD'){
+    const loadBtn=document.getElementById('dash-load-list');
+    if(loadBtn) loadBtn.onclick=()=>loadBundledSamplePriceList().then(()=>render());
+    document.querySelectorAll('[data-dash-open-quote]').forEach(b=>{b.onclick=()=>{
+      const q=state.quotes.find(x=>x.id===b.dataset.dashOpenQuote);
+      if(q){state.currentQuote=q;state.view='CUSTOMER_QUOTE';state.editMode=false;render();}
+    };});
+  }
+
+  if(state.view==='INPUT_FORM'){
+    document.getElementById('upload-trigger')?.addEventListener('click',()=>document.getElementById('file-create')?.click());
+    document.getElementById('load-sample-catalog')?.addEventListener('click',()=>{
+      loadBundledSamplePriceList().then(()=>render());
+    });
+    const fc=document.getElementById('file-create');
+    if(fc) fc.onchange=()=>{if(fc.files[0])parseExcel(fc.files[0],d=>addPriceList(fc.files[0].name,d));};
+    const sel=document.getElementById('select-price-list');
+    if(sel) sel.onchange=()=>{const pl=state.priceLists.find(p=>p.id===sel.value);if(pl){state.preferredListId=pl.id;store.set('ps_preferred_list',pl.id);state.activePriceList=pl.data;render();}};
+    const cn=document.getElementById('customer-name');if(cn) cn.oninput=()=>{state.customerName=cn.value;};
+    const ce=document.getElementById('customer-email');if(ce) ce.oninput=()=>{state.customerEmail=ce.value;};
+    const cp=document.getElementById('customer-phone');if(cp) cp.oninput=()=>{state.customerPhone=cp.value;};
+    const ca=document.getElementById('customer-address');if(ca) ca.oninput=()=>{state.customerAddress=ca.value;};
+    const qi=document.getElementById('quote-input');
+    if(qi) qi.oninput=()=>{state.userInput=qi.value;};
+    const adj=document.getElementById('adjustment-input');if(adj) adj.oninput=()=>{state.adjustmentText=adj.value;};
+    const identifyBtn=document.getElementById('identify-items');
+    if(identifyBtn) identifyBtn.onclick=async()=>{
+      if(qi) state.userInput=qi.value;
+      if(!state.activePriceList?.length){alert('Load a price list first.');return;}
+      if(!state.userInput.trim()){alert('Describe the items for this quote.');return;}
+      state.matchLoading=true;state.matchMessage='';render();
+      try{
+        const matched=await matchQuoteItemsAI(state.userInput,state.activePriceList);
+        if(!matched.length){state.matchMessage='Could not match items. Try being more specific.';state.draftLines=[];return;}
+        const lines=[];
+        for(const m of matched){
+          const pli=state.activePriceList.find(p=>p.Item===m.Item);
+          if(pli){const qty=Math.max(1,m.Quantity);const tp=pli.Price*qty,tc=pli.Cost*qty;lines.push({...pli,Quantity:qty,TotalPrice:tp,TotalCost:tc,Profit:tp-tc,ProfitMargin:tp>0?((tp-tc)/tp)*100:0});}
+        }
+        if(!lines.length){state.matchMessage='Matched items but none found in catalog. Reload Sample Catalog.';state.draftLines=[];return;}
+        state.draftLines=lines;state.matchMessage=`Matched ${lines.length} item(s) from your description.`;
+      }catch(err){state.matchMessage='';alert('Error: '+(err.message||err));}
+      finally{state.matchLoading=false;render();}
+    };
+    document.getElementById('apply-adjustment')?.addEventListener('click',()=>{
+      if(state.adjustmentText.toLowerCase().includes('10%')){
+        state.draftLines=state.draftLines.map(l=>{const o=l.originalPrice??l.Price;const np=o*0.9;return{...l,originalPrice:o,Price:np,TotalPrice:np*l.Quantity,Profit:np*l.Quantity-l.Cost*l.Quantity};});
+        render();
+      }
+    });
+    document.getElementById('describe-changes')?.addEventListener('click',()=>{state.matchMessage='Adjustment noted: '+state.adjustmentText;render();});
+    document.querySelectorAll('[data-draft-qty]').forEach(inp=>{inp.oninput=()=>{const i=+inp.dataset.draftQty;const q=Math.max(1,parseInt(inp.value)||1);const l=state.draftLines[i];l.Quantity=q;l.TotalPrice=l.Price*q;l.TotalCost=l.Cost*q;l.Profit=l.TotalPrice-l.TotalCost;renderDebounced();};});
+    document.querySelectorAll('[data-draft-price]').forEach(inp=>{inp.oninput=()=>{const i=+inp.dataset.draftPrice;const p=parseFloat(inp.value)||0;const l=state.draftLines[i];if(!l.originalPrice)l.originalPrice=l.Price;l.Price=p;l.TotalPrice=p*l.Quantity;l.TotalCost=l.Cost*l.Quantity;l.Profit=l.TotalPrice-l.TotalCost;renderDebounced();};});
+    document.querySelectorAll('[data-draft-promo]').forEach(sel=>{sel.onchange=()=>{state.draftLines[+sel.dataset.draftPromo].promotion=sel.value||undefined;};});
+    const createBtn=document.getElementById('create-quote-btn');
+    if(createBtn) createBtn.onclick=()=>{
+      if(!state.draftLines.length){alert('Identify items first.');return;}
+      const quote=createQuote(state.draftLines,state.customerName);
+      quote.customerEmail=state.customerEmail||undefined;quote.customerPhone=state.customerPhone||undefined;
+      quote.customerAddress=state.customerAddress||undefined;quote.taxRate=0.13;
+      state.quotes.unshift(quote);saveQuotes();state.currentQuote=quote;state.view='CUSTOMER_QUOTE';
+      state.draftLines=[];state.userInput='';state.customerName='';state.customerEmail='';state.customerPhone='';state.customerAddress='';state.adjustmentText='';state.matchMessage='';
+      render();
+    };
+  }
+
+  if(state.view==='CUSTOMER_QUOTE'||state.view==='INTERNAL_QUOTE'){
+    const q=state.currentQuote;
+    const tv=document.getElementById('toggle-view'); if(tv) tv.onclick=()=>{state.view=state.view==='INTERNAL_QUOTE'?'CUSTOMER_QUOTE':'INTERNAL_QUOTE';render();};
+    const te=document.getElementById('toggle-edit'); if(te) te.onclick=()=>{state.editMode=!state.editMode;render();};
+    const td=document.getElementById('toggle-discounts'); if(td) td.onclick=()=>{state.showDiscounts=!state.showDiscounts;render();};
+    const ep=document.getElementById('export-pdf'); if(ep) ep.onclick=()=>exportPdf(q,getCompany(),getTerms());
+    const cq=document.getElementById('copy-quote'); if(cq) cq.onclick=()=>copyQuoteSummary(q);
+    const st=document.getElementById('save-template'); if(st) st.onclick=()=>{
+      const name=prompt('Template name:',q.customerName||'Package template');
+      if(name?.trim()) saveQuoteTemplate(name.trim(),q.lines);
+    };
+    const nq=document.getElementById('new-quote'); if(nq) nq.onclick=()=>{state.currentQuote=null;state.userInput='';state.customerName='';navigate('INPUT_FORM');};
+    const qs=document.getElementById('quote-status'); if(qs) qs.onchange=e=>{
+      q.status=e.target.value;q.version++;const idx=state.quotes.findIndex(x=>x.id===q.id);
+      if(idx>=0)state.quotes[idx]=q;saveQuotes();state.currentQuote=q;
+    };
+    document.getElementById('quote-financing')?.addEventListener('change',e=>{state.quoteFinancing=e.target.value;});
+    document.getElementById('quote-deposit')?.addEventListener('input',e=>{state.quoteDeposit=e.target.value;});
+    document.querySelectorAll('[name="financing-display"]').forEach(r=>{r.onchange=()=>{if(r.checked)state.quoteFinancingDisplay=r.value;};});
+    document.querySelectorAll('[data-line-promo]').forEach(sel=>{sel.onchange=()=>{
+      const i=+sel.dataset.linePromo;q.lines[i]={...q.lines[i],promotion:sel.value||undefined};
+      const idx=state.quotes.findIndex(x=>x.id===q.id);if(idx>=0)state.quotes[idx]=q;saveQuotes();state.currentQuote=q;
+    };});
+    document.querySelectorAll('[data-disc-pct]').forEach(b=>b.onclick=()=>{state.discountPct=+b.dataset.discPct;render();});
+    document.getElementById('disc-reason')?.addEventListener('change',e=>{state.discountReason=e.target.value;});
+    document.getElementById('apply-discount')?.addEventListener('click',()=>{
+      const lines=applyBulkDiscount(q.lines,state.discountPct,state.discountReason);
+      const totals=recalcTotals(lines);Object.assign(q,{lines,...totals,version:q.version+1});
+      const idx=state.quotes.findIndex(x=>x.id===q.id);if(idx>=0)state.quotes[idx]=q;saveQuotes();
+      state.currentQuote=q;state.showDiscounts=false;render();
+    });
+    document.getElementById('remove-discount')?.addEventListener('click',()=>{
+      const lines=q.lines.map(line=>{
+        const price=line.originalPrice??line.Price,tp=price*line.Quantity,tc=line.Cost*line.Quantity,profit=tp-tc;
+        return{...line,Price:price,originalPrice:undefined,discountPercentage:undefined,discountReason:undefined,discountAmount:undefined,
+          TotalPrice:tp,TotalCost:tc,Profit:profit,ProfitMargin:tp>0?(profit/tp)*100:0};
+      });
+      const totals=recalcTotals(lines);Object.assign(q,{lines,...totals,version:q.version+1});
+      const idx=state.quotes.findIndex(x=>x.id===q.id);if(idx>=0)state.quotes[idx]=q;saveQuotes();state.currentQuote=q;render();
+    });
+    document.querySelectorAll('[data-edit-price]').forEach(inp=>{
+      inp.onchange=()=>{
+        const i=+inp.dataset.editPrice,newPrice=parseFloat(inp.value)||0;
+        const line={...q.lines[i]};
+        if(!line.originalPrice) line.originalPrice=line.Price;
+        line.Price=newPrice;line.discountPercentage=line.originalPrice>0?Math.round((1-newPrice/line.originalPrice)*100):0;
+        line.TotalPrice=newPrice*line.Quantity;line.TotalCost=line.Cost*line.Quantity;
+        line.Profit=line.TotalPrice-line.TotalCost;line.ProfitMargin=line.TotalPrice>0?(line.Profit/line.TotalPrice)*100:0;
+        q.lines[i]=line;const totals=recalcTotals(q.lines);Object.assign(q,totals);
+        const idx=state.quotes.findIndex(x=>x.id===q.id);if(idx>=0)state.quotes[idx]=q;saveQuotes();state.currentQuote=q;render();
+      };
+    });
+  }
+
+  if(state.view==='QUOTE_HISTORY'){
+    document.getElementById('history-search')?.addEventListener('input',e=>{state.historySearch=e.target.value;renderDebounced();});
+    document.querySelectorAll('[data-view-quote]').forEach(b=>b.onclick=()=>{
+      const q=state.quotes.find(x=>x.id===b.dataset.viewQuote);if(q){state.currentQuote=q;state.view='CUSTOMER_QUOTE';state.editMode=false;render();}
+    });
+    document.querySelectorAll('[data-duplicate-quote]').forEach(b=>b.onclick=()=>{
+      const q=state.quotes.find(x=>x.id===b.dataset.duplicateQuote);if(q) duplicateQuote(q);
+    });
+    document.querySelectorAll('[data-delete-quote]').forEach(b=>b.onclick=()=>{
+      if(confirm('Delete this quote?')){state.quotes=state.quotes.filter(x=>x.id!==b.dataset.deleteQuote);saveQuotes();render();}
+    });
+  }
+
+  if(state.view==='PRICE_LISTS'){
+    document.getElementById('load-2026-list')?.addEventListener('click',loadBundledSamplePriceList);
+    const uz=document.getElementById('upload-zone-lists'),fl=document.getElementById('file-lists');
+    if(uz&&fl){uz.onclick=()=>fl.click();fl.onchange=()=>{if(fl.files[0])parseExcel(fl.files[0],d=>addPriceList(fl.files[0].name,d));};}
+    document.querySelectorAll('[data-pref-list]').forEach(b=>b.onclick=()=>{
+      state.preferredListId=b.dataset.prefList;store.set('ps_preferred_list',state.preferredListId);
+      const pl=state.priceLists.find(p=>p.id===state.preferredListId);state.activePriceList=pl?.data||null;render();
+    });
+    document.querySelectorAll('[data-del-list]').forEach(b=>b.onclick=()=>{
+      if(confirm('Delete this price list?')){
+        state.priceLists=state.priceLists.filter(p=>p.id!==b.dataset.delList);savePriceLists();
+        if(state.preferredListId===b.dataset.delList){state.preferredListId=state.priceLists[0]?.id||null;store.set('ps_preferred_list',state.preferredListId);}
+        const pl=state.priceLists.find(p=>p.id===state.preferredListId);state.activePriceList=pl?.data||null;render();
+      }
+    });
+  }
+
+  if(state.view==='CUSTOMERS'){
+    document.getElementById('add-customer')?.addEventListener('click',()=>{state.customerForm={name:'',email:'',phone:'',company:'',address:''};render();});
+    document.getElementById('cancel-customer')?.addEventListener('click',()=>{state.customerForm=null;render();});
+    document.getElementById('customer-form')?.addEventListener('submit',e=>{
+      e.preventDefault();const fd=new FormData(e.target);
+      const data={name:fd.get('name'),email:fd.get('email'),phone:fd.get('phone'),company:fd.get('company'),address:fd.get('address')};
+      if(state.customerForm.id){
+        const idx=state.customers.findIndex(c=>c.id===state.customerForm.id);
+        if(idx>=0)state.customers[idx]={...state.customers[idx],...data};
+      }else{state.customers.push({id:uid(),...data,createdAt:new Date().toISOString()});}
+      saveCustomers();state.customerForm=null;render();
+    });
+    document.querySelectorAll('[data-edit-customer]').forEach(b=>{const c=state.customers.find(x=>x.id===b.dataset.editCustomer);
+      b.onclick=()=>{state.customerForm={id:c.id,name:c.name,email:c.email||'',phone:c.phone||'',company:c.company||'',address:c.address||''};render();};
+    });
+    document.querySelectorAll('[data-del-customer]').forEach(b=>b.onclick=()=>{
+      if(confirm('Delete this customer?')){state.customers=state.customers.filter(c=>c.id!==b.dataset.delCustomer);saveCustomers();render();}
+    });
+  }
+
+  if(state.view==='COMPANY_BRANDING'){
+    const refreshPreview=(co)=>{
+      const prev=document.getElementById('brand-preview');
+      if(!prev) return;
+      prev.style.background='linear-gradient(135deg,'+co.primaryColor+','+co.secondaryColor+')';
+      const title=prev.querySelector('div:last-child')?.previousElementSibling||prev.querySelector('div');
+      if(title) title.textContent=co.companyName;
+    };
+    const updateCo=(field,val)=>{const co=getCompany();co[field]=val;saveCompany(co);refreshPreview(co);};
+    document.querySelectorAll('[data-co]').forEach(inp=>{inp.oninput=()=>updateCo(inp.dataset.co,inp.value);
+      const colorInp=document.querySelector('[data-co-color="'+inp.dataset.co+'"]');if(colorInp&&inp.type!=='color')colorInp.value=inp.value;});
+    document.querySelectorAll('[data-co-color]').forEach(inp=>{inp.oninput=()=>{updateCo(inp.dataset.coColor,inp.value);
+      const textInp=document.querySelector('[data-co="'+inp.dataset.coColor+'"]');if(textInp)textInp.value=inp.value;};});
+    document.getElementById('brand-logo-upload')?.addEventListener('click',()=>document.getElementById('brand-logo-file')?.click());
+    document.getElementById('brand-logo-file')?.addEventListener('change',e=>{
+      const file=e.target.files?.[0];if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{updateCo('logoUrl',reader.result);render();};
+      reader.readAsDataURL(file);
+    });
+    document.querySelectorAll('[data-brand-preset]').forEach(btn=>{
+      btn.onclick=()=>{
+        const preset=COLOR_PRESETS.find(p=>p.name===btn.dataset.brandPreset);
+        if(!preset) return;
+        const co=getCompany();
+        co.primaryColor=preset.primary;co.secondaryColor=preset.secondary;
+        saveCompany(co);render();
+      };
+    });
+  }
+
+  if(state.view==='SETTINGS'){
+    const sn=document.getElementById('settings-name'); if(sn) sn.onchange=()=>updateUser({displayName:sn.value});
+    const sc=document.getElementById('settings-company'); if(sc) sc.onchange=()=>updateUser({company:sc.value});
+    const dt=document.getElementById('default-terms'); if(dt) dt.onchange=()=>store.set('ps_terms',dt.value);
+    const ak=document.getElementById('settings-anthropic-key'); if(ak) ak.onchange=()=>store.set('ps_anthropic_api_key',ak.value.trim());
+    const tt=document.getElementById('toggle-theme'); if(tt) tt.onclick=()=>{
+      const cur=document.documentElement.getAttribute('data-theme')||'light';
+      const next=cur==='light'?'dark':'light';
+      document.documentElement.setAttribute('data-theme',next);store.set('ps_theme',next);
+    };
+  }
+
+  if(state.view==='PROMOTIONS'){
+    document.getElementById('promo-form')?.addEventListener('submit',e=>{
+      e.preventDefault();const fd=new FormData(e.target);
+      const payload={name:fd.get('name').trim(),discountPct:Math.min(100,Math.max(0,parseFloat(fd.get('discount'))||0)),
+        validUntil:fd.get('validUntil')||'',description:(fd.get('description')||'').trim(),active:true};
+      if(!payload.name) return;
+      if(state.promoForm?.editingId){
+        const idx=state.promotionRecords.findIndex(p=>p.id===state.promoForm.editingId);
+        if(idx>=0) state.promotionRecords[idx]={...state.promotionRecords[idx],...payload};
+      }else{
+        state.promotionRecords.push({id:uid(),...payload,createdAt:new Date().toISOString()});
+      }
+      savePromotions();state.promoForm=null;render();
+    });
+    document.getElementById('promo-form-cancel')?.addEventListener('click',()=>{state.promoForm=null;render();});
+    document.querySelectorAll('[data-edit-promo]').forEach(b=>{b.onclick=()=>{
+      const p=state.promotionRecords.find(x=>x.id===b.dataset.editPromo);
+      if(p) state.promoForm={editingId:p.id,name:p.name,discount:String(p.discountPct),validUntil:p.validUntil,description:p.description};
+      render();
+    };});
+    document.querySelectorAll('[data-toggle-promo]').forEach(b=>{b.onclick=()=>{
+      const p=state.promotionRecords.find(x=>x.id===b.dataset.togglePromo);
+      if(p){p.active=!p.active;savePromotions();render();}
+    };});
+    document.querySelectorAll('[data-del-promo]').forEach(b=>{b.onclick=()=>{
+      if(confirm('Delete this promotion?')){state.promotionRecords=state.promotionRecords.filter(p=>p.id!==b.dataset.delPromo);savePromotions();render();}
+    };});
+  }
+
+  if(state.view==='FINANCING'){
+    document.getElementById('financing-add-btn')?.addEventListener('click',()=>{
+      state.financingForm={show:true,editingId:null,name:'',termMonths:'12',apr:'0',minAmount:'5000'};render();
+    });
+    document.getElementById('financing-form-cancel')?.addEventListener('click',()=>{state.financingForm=null;render();});
+    document.getElementById('financing-form')?.addEventListener('submit',e=>{
+      e.preventDefault();const fd=new FormData(e.target);
+      const payload={name:fd.get('name').trim(),termMonths:parseInt(fd.get('termMonths'),10)||12,
+        apr:parseFloat(fd.get('apr'))||0,minAmount:parseFloat(fd.get('minAmount'))||0,active:true};
+      if(!payload.name) return;
+      if(state.financingForm?.editingId){
+        const idx=state.financingOptions.findIndex(o=>o.id===state.financingForm.editingId);
+        if(idx>=0) state.financingOptions[idx]={...state.financingOptions[idx],...payload};
+      }else state.financingOptions.push({id:uid(),...payload});
+      saveFinancing();state.financingForm=null;render();
+    });
+    document.querySelectorAll('[data-edit-financing]').forEach(b=>{b.onclick=()=>{
+      const opt=state.financingOptions.find(x=>x.id===b.dataset.editFinancing);
+      if(opt) state.financingForm={show:true,editingId:opt.id,name:opt.name,termMonths:String(opt.termMonths),apr:String(opt.apr),minAmount:String(opt.minAmount)};
+      render();
+    };});
+    document.querySelectorAll('[data-del-financing]').forEach(b=>{b.onclick=()=>{
+      if(confirm('Remove this financing option?')){state.financingOptions=state.financingOptions.filter(o=>o.id!==b.dataset.delFinancing);saveFinancing();render();}
+    };});
+  }
+
+  if(state.view==='TEAM'){
+    document.getElementById('team-invite-btn')?.addEventListener('click',()=>{
+      state.teamForm={editingId:null,name:'',role:TEAM_ROLES[1],email:''};render();
+    });
+    document.getElementById('team-form-cancel')?.addEventListener('click',()=>{state.teamForm=null;render();});
+    document.getElementById('team-form')?.addEventListener('submit',e=>{
+      e.preventDefault();const fd=new FormData(e.target);
+      const data={name:fd.get('name').trim(),role:fd.get('role'),email:fd.get('email').trim()};
+      if(!data.name||!data.email) return;
+      if(state.teamForm?.editingId){
+        const idx=state.teamMembers.findIndex(m=>m.id===state.teamForm.editingId);
+        if(idx>=0) state.teamMembers[idx]={...state.teamMembers[idx],...data};
+      }else state.teamMembers.push({id:uid(),...data,status:'Invited',createdAt:new Date().toISOString()});
+      saveTeam();state.teamForm=null;render();
+    });
+    document.querySelectorAll('[data-edit-team]').forEach(b=>{b.onclick=()=>{
+      const m=state.teamMembers.find(x=>x.id===b.dataset.editTeam);
+      if(m) state.teamForm={editingId:m.id,name:m.name,role:m.role,email:m.email};render();
+    };});
+    document.querySelectorAll('[data-activate-team]').forEach(b=>{b.onclick=()=>{
+      const m=state.teamMembers.find(x=>x.id===b.dataset.activateTeam);
+      if(m){m.status='Active';saveTeam();render();}
+    };});
+    document.querySelectorAll('[data-del-team]').forEach(b=>{b.onclick=()=>{
+      if(confirm('Remove this team member?')){state.teamMembers=state.teamMembers.filter(m=>m.id!==b.dataset.delTeam);saveTeam();render();}
+    };});
+  }
+
+  if(state.view==='FILES'){
+    const uploadFiles=(fileList)=>{
+      if(!fileList?.length) return;
+      state.filesError='';state.filesUploading=true;render();
+      const pending=[...fileList];
+      const processNext=()=>{
+        if(!pending.length){state.filesUploading=false;render();return;}
+        const file=pending.shift();
+        if(file.size>FILES_MAX_MB*1024*1024){state.filesError='"'+file.name+'" exceeds '+FILES_MAX_MB+'MB limit';state.filesUploading=false;render();return;}
+        const reader=new FileReader();
+        reader.onload=()=>{
+          state.storedFiles.unshift({id:uid(),name:file.name,type:inferFileType(file.name),size:file.size,uploadedAt:new Date().toISOString(),dataUrl:reader.result});
+          saveFiles();processNext();
+        };
+        reader.onerror=()=>{state.filesError='Upload failed for "'+file.name+'"';state.filesUploading=false;render();};
+        reader.readAsDataURL(file);
+      };
+      processNext();
+    };
+    const zone=document.getElementById('files-upload-zone'),inp=document.getElementById('files-input');
+    if(zone&&inp){
+      zone.onclick=()=>{if(!state.filesUploading) inp.click();};
+      zone.ondragover=e=>{e.preventDefault();e.stopPropagation();};
+      zone.ondrop=e=>{e.preventDefault();if(!state.filesUploading) uploadFiles(e.dataTransfer.files);};
+      inp.onchange=()=>{uploadFiles(inp.files);inp.value='';};
+    }
+    document.getElementById('download-sample-catalog')?.addEventListener('click',()=>{
+      fetch('sample-price-list.json').then(r=>r.ok?r.json():Promise.reject()).then(data=>{
+        const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sample-price-list.json';a.click();
+      }).catch(()=>loadBundledSamplePriceList(true).then(()=>{
+        const data=state.activePriceList||SAMPLE_PRICE_LIST;
+        const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sample-price-list.json';a.click();
+      }));
+    });
+    document.querySelectorAll('[data-download-file]').forEach(b=>{b.onclick=()=>{
+      const f=state.storedFiles.find(x=>x.id===b.dataset.downloadFile);
+      if(f){const a=document.createElement('a');a.href=f.dataUrl;a.download=f.name;a.click();}
+    };});
+    document.querySelectorAll('[data-del-file]').forEach(b=>{b.onclick=()=>{
+      if(confirm('Delete this file?')){state.storedFiles=state.storedFiles.filter(f=>f.id!==b.dataset.delFile);saveFiles();render();}
+    };});
+  }
+
+  if(state.view==='SUBSCRIPTION'){
+    document.querySelectorAll('[data-select-plan]').forEach(b=>{b.onclick=()=>{
+      state.subscriptionPlanId=b.dataset.selectPlan;saveSubscription();render();
+    };});
+    document.getElementById('billing-email')?.addEventListener('input',e=>{state.billingEmail=e.target.value;});
+    document.getElementById('save-billing')?.addEventListener('click',()=>{
+      saveSubscription();state.subscriptionSaved=true;render();
+      setTimeout(()=>{state.subscriptionSaved=false;if(state.view==='SUBSCRIPTION'&&state.user) render();},2000);
+    });
+  }
+
+  if(state.view==='INVENTORY'){
+    const invLoad=document.getElementById('inventory-load-catalog');
+    if(invLoad) invLoad.onclick=()=>loadBundledSamplePriceList().then(()=>render());
+    const invSearch=document.getElementById('inventory-search');
+    if(invSearch) invSearch.oninput=e=>{state.inventorySearch=e.target.value;renderDebounced();};
+    document.getElementById('inventory-sort')?.addEventListener('change',e=>{state.inventorySort=e.target.value;render();});
+  }
+
+  if(state.view==='ANALYTICS'){
+    document.querySelectorAll('[data-analytics-filter]').forEach(b=>{b.onclick=()=>{state.analyticsFilter=b.dataset.analyticsFilter;render();};});
+    document.getElementById('analytics-export-csv')?.addEventListener('click',()=>{
+      const filter=state.analyticsFilter;
+      const filtered=filter==='all'?state.quotes:state.quotes.filter(q=>q.status.toLowerCase()===filter);
+      const rows=[['Customer','Date','Total','Profit','Status','Items']];
+      filtered.forEach(q=>rows.push([q.customerName||'',new Date(q.createdAt).toLocaleDateString(),q.overallTotalPrice.toFixed(2),q.overallProfit.toFixed(2),q.status,String(q.lines.length)]));
+      const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+      const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+      a.download='pricesnap-analytics-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+    });
+    document.querySelectorAll('[data-view-quote]').forEach(b=>b.onclick=()=>{
+      const q=state.quotes.find(x=>x.id===b.dataset.viewQuote);if(q){state.currentQuote=q;state.view='CUSTOMER_QUOTE';state.editMode=false;render();}
+    });
+  }
+
+  if(state.view==='PROFILE'){
+    document.getElementById('profile-name')?.addEventListener('change',e=>updateUser({displayName:e.target.value}));
+    document.getElementById('profile-company')?.addEventListener('change',e=>updateUser({company:e.target.value}));
+    document.getElementById('profile-phone')?.addEventListener('change',e=>updateUser({phone:e.target.value}));
+    document.getElementById('profile-logout')?.addEventListener('click',()=>{state.showLogoutConfirm=true;render();});
+  }
+
+  document.getElementById('logout-cancel')?.addEventListener('click',()=>{state.showLogoutConfirm=false;render();});
+  document.getElementById('logout-confirm')?.addEventListener('click',()=>{state.showLogoutConfirm=false;logout();});
+}
+
+function login(email,password){
+  const users=store.get('ps_users',[]);
+  const u=users.find(x=>x.email===email&&x.password===password);
+  if(u){const{password:_,...user}=u;state.user=user;store.set('ps_user',user);initializeWorkspaceForUser(user);showApp();return true;}
+  return false;
+}
+
+function signup(name,email,password){
+  const users=store.get('ps_users',[]);
+  if(users.some(u=>u.email===email)) return 'Email already registered';
+  const user={id:uid(),email,displayName:name,password};
+  users.push(user);store.set('ps_users',users);
+  const{password:_,...pub}=user;state.user=pub;store.set('ps_user',pub);
+  initializeWorkspaceForUser(pub);
+  showApp();return null;
+}
+
+function logout(){state.user=null;state.showLogoutConfirm=false;state.marketingPreview=false;store.set('ps_user',null);showLanding();updateLandingMode(false);}
+
+document.querySelectorAll('[data-auth-tab]').forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll('[data-auth-tab]').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const mode=tab.dataset.authTab;
+    document.getElementById('login-form').classList.toggle('hidden',mode!=='login');
+    document.getElementById('signup-form').classList.toggle('hidden',mode!=='signup');
+    document.getElementById('help-form').classList.toggle('hidden',mode!=='help');
+    const sub=document.getElementById('auth-subtitle');
+    if(sub) sub.textContent=mode==='signup'?'Create your account':mode==='help'?'How can we help?':'Welcome back';
+    document.getElementById('auth-error').classList.add('hidden');
+  };
+});
+
+document.getElementById('help-back')?.addEventListener('click',()=>closeAuth());
+
+document.getElementById('auth-screen')?.addEventListener('click',e=>{
+  if(e.target===document.getElementById('auth-screen')) closeAuth();
+});
+
+['landing-signin','landing-signup','landing-help','landing-get-started','landing-get-started-2','landing-signin-2','landing-get-started-3'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.onclick=()=>{
+    if(state.marketingPreview) return;
+    if(id==='landing-signin'||id==='landing-signin-2') openAuth('login');
+    else if(id==='landing-signup'||id.startsWith('landing-get-started')) openAuth('signup');
+    else if(id==='landing-help') openAuth('help');
+  };
+});
+
+['landing-back-app','landing-open-workspace','landing-return-workspace'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click',()=>backToApp());
+});
+document.getElementById('landing-new-quote')?.addEventListener('click',()=>{
+  state.marketingPreview=false;
+  updateLandingMode(false);
+  showApp();
+  navigate('INPUT_FORM');
+});
+
+document.getElementById('login-form').onsubmit=e=>{
+  e.preventDefault();
+  const err=document.getElementById('auth-error');
+  if(!login(document.getElementById('login-email').value,document.getElementById('login-password').value)){
+    err.textContent='Invalid email or password';err.classList.remove('hidden');
+  }
+};
+
+document.getElementById('signup-form').onsubmit=e=>{
+  e.preventDefault();
+  const err=document.getElementById('auth-error');
+  const msg=signup(document.getElementById('signup-name').value,document.getElementById('signup-email').value,document.getElementById('signup-password').value);
+  if(msg){err.textContent=msg;err.classList.remove('hidden');}
+};
+
+loadState();
+document.addEventListener('click',()=>{if(state.settingsOpen){state.settingsOpen=false;if(state.user&&!state.marketingPreview)render();}});
+if(state.user) showApp();
+else showLanding();
+
+})();
+</script>
+</body>
+</html>

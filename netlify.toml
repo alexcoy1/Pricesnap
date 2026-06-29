@@ -1,0 +1,22 @@
+# PriceSnap — deploy to Netlify (React app + Claude serverless API)
+# Docs: DEPLOY.md
+
+[build]
+  command = "npm install --prefix frontend && npm run build --prefix frontend"
+  publish = "frontend/dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Claude quote-matching API (server-side — key lives in Netlify env vars)
+[[redirects]]
+  from = "/api/ai/generate-quote-items"
+  to = "/.netlify/functions/generate-quote-items"
+  status = 200
+
+# SPA: React client-side routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

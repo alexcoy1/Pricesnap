@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Rule Match Test</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<pre id="out">Running...</pre>
+<script type="module">
+import { splitSegments, ruleBasedMatch, mergeContext } from './categoryMatcher.js';
+
+const FALLBACK = [
+  { Item: 'Custom - Summit XL Signtaure', Price: 18999, Cost: 12000 },
+  { Item: 'Custom - Summit XL Cover', Price: 1699, Cost: 900 },
+  { Item: 'Custom - Arctic Fox Prestige', Price: 12999, Cost: 8500 },
+  { Item: 'Custom - Fox Mylovac Cover', Price: 799, Cost: 450 },
+  { Item: 'Custom - Onzen', Price: 1299, Cost: 700 },
+  { Item: "Covana Legend - LEGEND - 14' Slate/White or Mocha/White", Price: 24999, Cost: 16000 },
+  { Item: 'Covana Legend - Legend Installation', Price: 2500, Cost: 1200 },
+];
+
+function matchRule(input, priceList) {
+  const results = [], used = new Set();
+  let ctx = { series: null, model: null, size: null, tier: null };
+  for (const seg of splitSegments(input)) {
+    const m = ruleBasedMatch(seg, priceList, ctx, used);
+    if (m) { results.push(m); used.add(m.Item); ctx = mergeContext(ctx, m.Item); }
+  }
+  if (!results.length) {
+    const m = ruleBasedMatch(input, priceList, ctx, used);
+    if (m) results.push(m);
+  }
+  return results;
+}
+
+const tests = {
+  'summit signature with grey cover': ['Custom - Summit XL Signtaure', 'Custom - Summit XL Cover'],
+  'arctic fox prestige with cover and onzen': ['Custom - Arctic Fox Prestige', 'Custom - Fox Mylovac Cover', 'Custom - Onzen'],
+  'covana legend 14ft slate white with installation': ["Covana Legend - LEGEND - 14' Slate/White or Mocha/White", 'Covana Legend - Legend Installation'],
+};
+
+let priceList = FALLBACK;
+try {
+  const buf = await fetch('2026-Arctic-Spa-PriceSnap-Price-List.xlsx').then(r => r.arrayBuffer());
+  const wb = XLSX.read(buf);
+  const sheet = wb.Sheets[wb.SheetNames[0]];
+  priceList = XLSX.utils.sheet_to_json(sheet).map(r => ({
+    Item: String(r.Item || '').trim(),
+    Price: parseFloat(r.Price) || 0,
+    Cost: parseFloat(r.Cost) || 0,
+  })).filter(r => r.Item);
+} catch (e) { /* fallback */ }
+
+const lines = [];
+let pass = 0, fail = 0;
+for (const [input, expected] of Object.entries(tests)) {
+  const got = matchRule(input, priceList).map(m => m.Item);
+  const ok = got.length === expected.length && expected.every((e, i) => got[i] === e);
+  lines.push(`${ok ? 'PASS' : 'FAIL'}: ${input}`);
+  lines.push(`  got:      ${got.join(' | ')}`);
+  if (!ok) lines.push(`  expected: ${expected.join(' | ')}`);
+  ok ? pass++ : fail++;
+}
+lines.push(`\n${pass} passed, ${fail} failed (${priceList.length} items in list)`);
+document.getElementById('out').textContent = lines.join('\n');
+</script>
+</body></html>

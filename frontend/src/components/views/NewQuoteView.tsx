@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { PriceListItem, ManagedPriceListInfo, Customer, QuoteLineItem } from '../../types';
+import { CatalogSearchPicker } from '../quote/CatalogSearchPicker';
 
 interface Props {
   priceListData: PriceListItem[] | null;
@@ -29,7 +30,7 @@ interface Props {
   onLinePriceChange: (index: number, price: number) => void;
   onLineQtyChange: (index: number, qty: number) => void;
   onRemoveLine: (index: number) => void;
-  onAddManualLine: (itemName: string) => void;
+  onAddManualLine: (item: PriceListItem, quantity?: number) => void;
   onCreateQuote: () => void;
   isLoading: boolean;
   matchMessage: string | null;
@@ -71,13 +72,8 @@ export const NewQuoteView: React.FC<Props> = ({
   promotions,
 }) => {
   const fileRef = useRef<HTMLInputElement>(null);
-  const [manualItemSearch, setManualItemSearch] = useState('');
 
   const lineTotal = (line: QuoteLineItem) => line.TotalPrice;
-
-  const itemSuggestions = manualItemSearch.trim().length >= 2
-    ? priceListItems.filter((p) => p.Item.toLowerCase().includes(manualItemSearch.toLowerCase())).slice(0, 8)
-    : [];
 
   return (
     <div className="new-quote-view" style={{ maxWidth: 960, margin: '0 auto' }}>
@@ -162,6 +158,20 @@ export const NewQuoteView: React.FC<Props> = ({
         {matchMessage && (
           <p style={{ marginTop: 8, fontSize: 13, color: 'var(--color-text-secondary)' }}>{matchMessage}</p>
         )}
+
+        {priceListData && (
+          <>
+            <div className="catalog-search-divider">
+              <span>or add from catalog</span>
+            </div>
+            <CatalogSearchPicker
+              priceList={priceListItems}
+              quoteItemNames={quoteLines.map((l) => l.Item)}
+              onAddItem={(item, qty) => onAddManualLine(item, qty)}
+              disabled={isLoading}
+            />
+          </>
+        )}
       </div>
 
       <div className="card mb-6">
@@ -240,49 +250,26 @@ export const NewQuoteView: React.FC<Props> = ({
                     </td>
                   </tr>
                 ))}
-                <tr>
-                  <td colSpan={7}>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        className="form-input"
-                        list="manual-item-suggestions"
-                        value={manualItemSearch}
-                        onChange={(e) => setManualItemSearch(e.target.value)}
-                        placeholder="Search or type item name..."
-                      />
-                      <datalist id="manual-item-suggestions">
-                        {itemSuggestions.map((p) => <option key={p.Item} value={p.Item} />)}
-                      </datalist>
-                    </div>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
-          <div className="flex gap-2" style={{ marginTop: 12 }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              disabled={!manualItemSearch.trim()}
-              onClick={() => {
-                onAddManualLine(manualItemSearch.trim());
-                setManualItemSearch('');
-              }}
-            >
-              Add
-            </button>
-            {quoteLines.length > 0 && (
+          {quoteLines.length > 0 && (
+            <div className="flex gap-2" style={{ marginTop: 12, justifyContent: 'flex-end' }}>
               <button
                 type="button"
                 className="btn btn-primary"
-                style={{ marginLeft: 'auto' }}
                 onClick={onCreateQuote}
                 disabled={isLoading}
               >
                 Create Quote
               </button>
-            )}
-          </div>
+            </div>
+          )}
+          {quoteLines.length === 0 && (
+            <p style={{ marginTop: 12, fontSize: 13, color: 'var(--color-text-secondary)' }}>
+              Use AI above or catalog search to add line items.
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -24,6 +24,7 @@ import { SettingsView } from './components/views/SettingsView';
 import { QuoteHistoryView } from './components/views/QuoteHistoryView';
 import { PriceListsView } from './components/views/PriceListsView';
 import { recalcQuoteTotals } from './utils/discountHelpers';
+import { lineFromCatalogItem } from './utils/catalogSearch';
 import { activePromotionNames, parsePromotionsFromStorage } from './utils/workspaceDefaults';
 import { apiService } from './services/apiService';
 import { applyTheme, getThemePreference } from './utils/themeUtils';
@@ -704,20 +705,26 @@ All prices are in CAD.`;
             onLinePriceChange={(i, price) => updateDraftLine(i, (l) => ({ ...l, Price: price, originalPrice: l.originalPrice ?? l.Price }))}
             onLineQtyChange={(i, qty) => updateDraftLine(i, (l) => ({ ...l, Quantity: Math.max(1, qty) }))}
             onRemoveLine={(i) => setDraftQuoteLines((prev) => prev.filter((_, idx) => idx !== i))}
-            onAddManualLine={(itemName) => {
-              if (!priceListData) return;
-              const pli = priceListData.find((p) => p.Item.toLowerCase() === itemName.toLowerCase())
-                || priceListData.find((p) => p.Item.toLowerCase().includes(itemName.toLowerCase()));
-              if (!pli) return;
-              const line: QuoteLineItem = {
-                ...pli,
-                Quantity: 1,
-                TotalPrice: pli.Price,
-                TotalCost: pli.Cost,
-                Profit: pli.Price - pli.Cost,
-                ProfitMargin: pli.Price > 0 ? ((pli.Price - pli.Cost) / pli.Price) * 100 : 0,
-              };
-              setDraftQuoteLines((prev) => [...prev, line]);
+            onAddManualLine={(item, quantity = 1) => {
+              setDraftQuoteLines((prev) => {
+                const idx = prev.findIndex((l) => l.Item === item.Item);
+                if (idx >= 0) {
+                  const next = [...prev];
+                  const existing = next[idx];
+                  const merged = lineFromCatalogItem(item, existing.Quantity + quantity);
+                  next[idx] = {
+                    ...merged,
+                    promotion: existing.promotion,
+                    originalPrice: existing.originalPrice,
+                    discountPercentage: existing.discountPercentage,
+                    discountReason: existing.discountReason,
+                  };
+                  return next;
+                }
+                return [...prev, lineFromCatalogItem(item, quantity)];
+              });
+              setMatchMessage(`Added ${item.Item}${quantity > 1 ? ` × ${quantity}` : ''}`);
+              setError(null);
             }}
             priceListItems={priceListData ?? []}
             onCreateQuote={handleCreateQuoteFromDraft}

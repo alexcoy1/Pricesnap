@@ -2,17 +2,10 @@
  * Hybrid scoring: neural embeddings + lexical understanding + series context.
  */
 export const ALIASES = {
-  pres: ['prestige'],
-  prestige: ['prestige'],
-  sig: ['signature'],
-  signature: ['signature'],
-  cub: ['cub'],
-  fox: ['fox', 'arctic'],
-  summit: ['summit'],
-  spa: ['spa', 'spaboy'],
-  boy: ['boy', 'spaboy'],
-  spaboy: ['spaboy', 'spa', 'boy'],
-  onzen: ['onzen'],
+  prem: ['premium'],
+  std: ['standard'],
+  pro: ['pro'],
+  widget: ['widget'],
   light: ['lighting', 'light'],
   lights: ['lighting', 'light'],
   lighting: ['lighting', 'light'],
@@ -29,13 +22,11 @@ const STOP_WORDS = new Set(['a', 'an', 'the', 'with', 'and', 'or', 'for', 'to', 
 
 export function enrichText(text: string): string {
   return String(text)
-    .replace(/\bsig\b/gi, 'signature')
-    .replace(/\bpres\b/gi, 'prestige')
+    .replace(/\bprem\b/gi, 'premium')
+    .replace(/\bstd\b/gi, 'standard')
     .replace(/\bdel\b/gi, 'delivery')
     .replace(/\binst\b/gi, 'installation')
     .replace(/\blights\b/gi, 'lighting')
-    .replace(/\bspa\s*boy\b/gi, 'spaboy')
-    .replace(/\bfamily\s+lights\b/gi, 'family lighting')
     .trim();
 }
 
@@ -67,7 +58,7 @@ function expandToken(token: string): string[] {
   if (token.length > 4 && token.endsWith('s')) set.add(token.slice(0, -1));
   const aliases = ALIASES[token as keyof typeof ALIASES];
   if (aliases) aliases.forEach((a) => set.add(a));
-  if (token.startsWith('pres')) set.add('prestige');
+  if (token.startsWith('prem')) set.add('premium');
   return [...set];
 }
 
@@ -75,15 +66,6 @@ export function queryTokens(query: string): string[] {
   const words = normalizeForMatch(query).split(' ').filter((w) => w && !STOP_WORDS.has(w));
   const expanded = new Set<string>();
   for (const w of words) expandToken(w).forEach((t) => expanded.add(t));
-  if (/\bspa\s*boy\b/i.test(query) || /\bspaboy\b/i.test(query)) {
-    expanded.add('spaboy');
-    expanded.add('spa');
-    expanded.add('boy');
-  }
-  if (/\bcub\b/i.test(query) && /\bprestige\b/i.test(query)) {
-    expanded.add('cub');
-    expanded.add('prestige');
-  }
   return [...expanded];
 }
 
@@ -91,11 +73,6 @@ function itemTokens(itemName: string): string[] {
   const words = normalizeForMatch(itemName).split(' ').filter(Boolean);
   const expanded = new Set<string>();
   for (const w of words) expandToken(w).forEach((t) => expanded.add(t));
-  if (/spa\s*boy|spaboy/i.test(itemName)) {
-    expanded.add('spaboy');
-    expanded.add('spa');
-    expanded.add('boy');
-  }
   return [...expanded];
 }
 
@@ -118,17 +95,11 @@ export function lexicalScore(query: string, itemName: string): number {
   let score = weight > 0 ? hits / weight : 0;
   const qNorm = normalizeForMatch(query);
 
-  if (/\bcub\b/.test(qNorm) && /\bprestige\b/.test(qNorm) && /\bcub\b/.test(iJoined) && /\bprestige\b/.test(iJoined)) {
-    score = Math.min(1, score + 0.35);
+  if (/\bpremium\b/.test(qNorm) && /\bstandard\b/.test(qNorm) === false && /\bpremium\b/.test(iJoined)) {
+    score = Math.min(1, score + 0.1);
   }
-  if ((/\bspaboy\b/.test(qNorm) || /\bspa boy\b/.test(qNorm)) && /spa\s*boy|spaboy/i.test(itemName)) {
-    score = Math.min(1, score + 0.35);
-  }
-  if (/\bonzen\b/.test(qNorm) && /\bonzen\b/.test(iJoined)) {
-    score = Math.min(1, score + 0.25);
-  }
-  if (/\bfamily\b/.test(qNorm) && /\blight/.test(qNorm) && /\bfamily\b/.test(iJoined) && /\blight/.test(iJoined)) {
-    score = Math.min(1, score + 0.3);
+  if (/\bwidget\b/.test(qNorm) && /\bwidget\b/.test(iJoined)) {
+    score = Math.min(1, score + 0.15);
   }
 
   return Math.min(1, score);

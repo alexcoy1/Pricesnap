@@ -1,4 +1,4 @@
-const DEFAULT_MODEL = 'claude-sonnet-4-20250514';
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
 function buildCatalogText(priceList) {
   return priceList.map((p, i) => `${i + 1}. ${p.Item}`).join('\n');

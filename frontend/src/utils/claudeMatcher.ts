@@ -25,11 +25,8 @@ async function matchViaServer(
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(
-      (err as { error?: string; details?: string }).error
-        || (err as { details?: string }).details
-        || `AI request failed (${response.status})`
-    );
+    const body = err as { error?: string; details?: string };
+    throw new Error(body.details || body.error || `AI request failed (${response.status})`);
   }
 
   const data = await response.json();

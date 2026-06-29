@@ -1,4 +1,75 @@
-const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
+const MODEL_FALLBACKS = [
+  'claude-sonnet-4-6',
+  'claude-sonnet-4-5-20250929',
+  'claude-3-5-haiku-20241022',
+];
+const MAX_CATALOG_FOR_PROMPT = 60;
+
+const ALIASES = {
+  pres: ['prestige'],
+  sig: ['signature'],
+  cub: ['cub'],
+  spaboy: ['spaboy', 'spa', 'boy'],
+  spa: ['spa', 'spaboy'],
+  boy: ['boy', 'spaboy'],
+  onzen: ['onzen'],
+  light: ['lighting', 'light'],
+  lights: ['lighting', 'light'],
+  family: ['family'],
+  cover: ['cover'],
+  fox: ['fox', 'arctic'],
+  summit: ['summit'],
+};
+
+function normalizePriceList(priceList) {
+  return priceList.map((row) => {
+    if (typeof row === 'string') return { Item: row };
+    const item = row?.Item ?? row?.item ?? row?.name;
+    return item ? { Item: String(item).trim() } : null;
+  }).filter(Boolean);
+}
+
+function expandTokens(text) {
+  const words = String(text).toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length >= 2);
+  const tokens = new Set(words);
+  for (const w of words) {
+    const aliases = ALIASES[w];
+    if (aliases) aliases.forEach((a) => tokens.add(a));
+    if (w === 'pres') tokens.add('prestige');
+    if (w === 'sig') tokens.add('signature');
+  }
+  if (/\bspa\s*boy\b/i.test(text) || /\bspaboy\b/i.test(text)) {
+    tokens.add('spaboy');
+    tokens.add('spa');
+    tokens.add('boy');
+  }
+  return [...tokens];
+}
+
+function scoreCatalogItem(itemName, tokens) {
+  const lower = itemName.toLowerCase();
+  let score = 0;
+  for (const t of tokens) {
+    if (lower.includes(t)) score += t.length >= 4 ? 3 : 2;
+  }
+  if (tokens.includes('cub') && tokens.includes('prestige') && lower.includes('cub') && lower.includes('prestige')) score += 5;
+  if (tokens.includes('spaboy') && /spa\s*boy|spaboy/i.test(itemName)) score += 5;
+  if (tokens.includes('onzen') && lower.includes('onzen')) score += 4;
+  if (tokens.includes('family') && tokens.some((t) => t.startsWith('light')) && lower.includes('family') && /light/.test(lower)) score += 4;
+  return score;
+}
+
+function narrowCatalogForPrompt(userInput, priceList) {
+  if (priceList.length <= MAX_CATALOG_FOR_PROMPT) return priceList;
+  const tokens = expandTokens(userInput);
+  const scored = priceList
+    .map((row) => ({ row, score: scoreCatalogItem(row.Item, tokens) }))
+    .sort((a, b) => b.score - a.score);
+  const relevant = scored.filter((s) => s.score > 0).slice(0, MAX_CATALOG_FOR_PROMPT);
+  if (relevant.length >= 8) return relevant.map((s) => s.row);
+  return priceList.slice(0, MAX_CATALOG_FOR_PROMPT);
+}
 
 function buildCatalogText(priceList) {
   return priceList.map((p, i) => `${i + 1}. ${p.Item}`).join('\n');
@@ -81,6 +152,22 @@ export function parseClaudeItems(responseText, priceList) {
   return results;
 }
 
+function resolveModelCandidates(preferred) {
+  const seen = new Set();
+  const models = [];
+  for (const m of [preferred, DEFAULT_MODEL, ...MODEL_FALLBACKS]) {
+    if (m && !seen.has(m)) {
+      seen.add(m);
+      models.push(m);
+    }
+  }
+  return models;
+}
+
+function isModelError(message) {
+  return /model|not[_\s-]?found|deprecated|retired|invalid/i.test(message || '');
+}
+
 export async function callClaudeMessages(apiKey, system, userMessage, model = DEFAULT_MODEL) {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -100,7 +187,9 @@ export async function callClaudeMessages(apiKey, system, userMessage, model = DE
   if (!response.ok) {
     const errBody = await response.json().catch(() => ({}));
     const message = errBody.error?.message || `Claude API request failed (${response.status})`;
-    throw new Error(message);
+    const err = new Error(message);
+    err.status = response.status;
+    throw err;
   }
 
   const data = await response.json();
@@ -109,15 +198,35 @@ export async function callClaudeMessages(apiKey, system, userMessage, model = DE
   return text;
 }
 
+async function callClaudeWithFallback(apiKey, system, userMessage, preferredModel) {
+  const models = resolveModelCandidates(preferredModel);
+  let lastError = null;
+  for (const model of models) {
+    try {
+      const text = await callClaudeMessages(apiKey, system, userMessage, model);
+      return { text, model };
+    } catch (error) {
+      lastError = error;
+      if (!isModelError(error.message)) throw error;
+    }
+  }
+  throw lastError || new Error('No Claude model available.');
+}
+
 export async function matchQuoteItemsWithClaude(userInput, priceList, apiKey, options = {}) {
   if (!apiKey?.trim()) throw new Error('Claude API key is not configured on the server.');
   if (!userInput?.trim()) throw new Error('Describe the items you need.');
   if (!priceList?.length) throw new Error('Load a price list first.');
 
-  const { system, userMessage } = buildClaudePrompt(userInput, priceList);
-  const model = options.model || DEFAULT_MODEL;
-  const text = await callClaudeMessages(apiKey.trim(), system, userMessage, model);
-  return parseClaudeItems(text, priceList);
+  const normalized = normalizePriceList(priceList);
+  if (!normalized.length) throw new Error('Price list has no valid items.');
+
+  const promptCatalog = narrowCatalogForPrompt(userInput, normalized);
+  const { system, userMessage } = buildClaudePrompt(userInput, promptCatalog);
+  const preferredModel = options.model || process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
+  const { text, model } = await callClaudeWithFallback(apiKey.trim(), system, userMessage, preferredModel);
+  const items = parseClaudeItems(text, normalized);
+  return { items, model };
 }
 
 export { DEFAULT_MODEL };

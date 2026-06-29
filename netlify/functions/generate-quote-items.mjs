@@ -49,24 +49,26 @@ export default async (req) => {
     }
 
     const items = await matchQuoteItemsWithClaude(userInput, priceList, apiKey);
-    const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
+    const model = items.model || process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
+    const matched = items.items || items;
 
     return new Response(
       JSON.stringify({
-        items,
+        items: matched,
         matcher: 'claude',
         model,
-        message: items.length
-          ? `AI matched ${items.length} item(s) from your description`
+        message: matched.length
+          ? `AI matched ${matched.length} item(s) from your description`
           : 'AI could not match any catalog items. Try being more specific.',
       }),
       { status: 200, headers: JSON_HEADERS }
     );
   } catch (error) {
+    const message = error?.message || String(error);
     return new Response(
       JSON.stringify({
-        error: 'AI processing failed',
-        details: error.message || String(error),
+        error: message,
+        details: message,
       }),
       { status: 500, headers: JSON_HEADERS }
     );

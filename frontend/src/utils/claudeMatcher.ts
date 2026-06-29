@@ -20,7 +20,10 @@ async function matchViaServer(
   const response = await fetch(`${getApiBase()}/api/ai/generate-quote-items`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ userInput, priceList }),
+    body: JSON.stringify({
+      userInput,
+      priceList: priceList.map((p) => ({ Item: p.Item })),
+    }),
   });
 
   if (!response.ok) {

@@ -1,12 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { PriceListItem, ManagedPriceListInfo, Customer } from '../types';
 
-const QUICK_BUNDLES = [
-  { label: 'Summit + Cover', text: 'summit signature with grey cover' },
-  { label: 'Fox + Onzen', text: 'arctic fox prestige with cover and onzen' },
-  { label: 'Covana 14ft', text: 'covana legend 14ft slate white with installation' },
-  { label: 'Core Nova Sig', text: 'nova signature with mylovac upgrade' },
-  { label: 'AWP Ocean', text: 'ocean signature with onzen awp' },
+const QUICK_EXAMPLES = [
+  { label: 'Product + install', text: 'widget pro premium with standard installation' },
+  { label: 'Service bundle', text: 'annual service plan, starter kit, and 3-year warranty' },
+  { label: 'Team package', text: 'team software license with remote training' },
 ];
 
 interface Props {
@@ -202,9 +200,9 @@ export const QuoteInputForm: React.FC<Props> = ({
               </div>
             </>
           )}
-          <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginBottom: 8 }}>Quick bundles — tap to fill:</p>
+          <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginBottom: 8 }}>Quick examples — tap to fill:</p>
           <div className="flex gap-2 mb-3" style={{ flexWrap: 'wrap' }}>
-            {QUICK_BUNDLES.map((b) => (
+            {QUICK_EXAMPLES.map((b) => (
               <button
                 key={b.label}
                 type="button"
@@ -219,7 +217,7 @@ export const QuoteInputForm: React.FC<Props> = ({
             className="form-textarea"
             value={userInputText}
             onChange={(e) => onUserInputChange(e.target.value)}
-              placeholder="e.g. summit signature with grey cover, or arctic fox prestige and 7ft mylovac cover"
+              placeholder="e.g. premium widget with installation and extended warranty"
             rows={5}
           />
         </div>

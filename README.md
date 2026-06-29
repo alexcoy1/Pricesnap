@@ -101,7 +101,7 @@ Bundled `sample-price-list.json` is starter data only.
 ## Smoke-test phrase (sample catalog)
 
 ```
-cub sig, spaboy, spaboy starter
+widget pro, installation, annual service plan
 ```
 
 Should match three line items before creating a quote.

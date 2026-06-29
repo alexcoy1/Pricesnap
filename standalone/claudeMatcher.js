@@ -44,7 +44,7 @@ Rules:
 - ONLY use product names copied exactly from the catalog (character-for-character).
 - Infer quantities from the text; default quantity is 1.
 - When the customer mentions multiple products, return multiple line items.
-- Understand informal descriptions (e.g. "cub pres" → Cub Prestige, "spa boy" → SpaBoy).
+- Understand informal descriptions (e.g. shorthand and abbreviations that map to catalog product names).
 - Never invent products that are not in the catalog.
 - Respond with JSON only, no markdown.`;
 

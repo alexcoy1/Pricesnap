@@ -50,7 +50,7 @@ export const HomeView: React.FC<Props> = ({
               <span className="step-num">2</span>
               <div>
                 <strong>Describe a quote</strong>
-                <p>Try: <code>cub sig, spaboy, spaboy starter</code></p>
+                <p>Try: <code>widget pro, installation, annual service plan</code></p>
               </div>
             </li>
             <li>

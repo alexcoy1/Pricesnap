@@ -7,19 +7,14 @@ const MODEL_FALLBACKS = [
 const MAX_CATALOG_FOR_PROMPT = 60;
 
 const ALIASES = {
-  pres: ['prestige'],
-  sig: ['signature'],
-  cub: ['cub'],
-  spaboy: ['spaboy', 'spa', 'boy'],
-  spa: ['spa', 'spaboy'],
-  boy: ['boy', 'spaboy'],
-  onzen: ['onzen'],
-  light: ['lighting', 'light'],
-  lights: ['lighting', 'light'],
-  family: ['family'],
-  cover: ['cover'],
-  fox: ['fox', 'arctic'],
-  summit: ['summit'],
+  inst: ['installation'],
+  install: ['installation'],
+  warranty: ['warranty'],
+  prem: ['premium'],
+  std: ['standard'],
+  pro: ['pro'],
+  del: ['delivery', 'shipping'],
+  ship: ['shipping'],
 };
 
 function normalizePriceList(priceList) {
@@ -36,13 +31,9 @@ function expandTokens(text) {
   for (const w of words) {
     const aliases = ALIASES[w];
     if (aliases) aliases.forEach((a) => tokens.add(a));
-    if (w === 'pres') tokens.add('prestige');
-    if (w === 'sig') tokens.add('signature');
-  }
-  if (/\bspa\s*boy\b/i.test(text) || /\bspaboy\b/i.test(text)) {
-    tokens.add('spaboy');
-    tokens.add('spa');
-    tokens.add('boy');
+    if (w === 'prem') tokens.add('premium');
+    if (w === 'std') tokens.add('standard');
+    if (w === 'inst') tokens.add('installation');
   }
   return [...tokens];
 }
@@ -53,10 +44,6 @@ function scoreCatalogItem(itemName, tokens) {
   for (const t of tokens) {
     if (lower.includes(t)) score += t.length >= 4 ? 3 : 2;
   }
-  if (tokens.includes('cub') && tokens.includes('prestige') && lower.includes('cub') && lower.includes('prestige')) score += 5;
-  if (tokens.includes('spaboy') && /spa\s*boy|spaboy/i.test(itemName)) score += 5;
-  if (tokens.includes('onzen') && lower.includes('onzen')) score += 4;
-  if (tokens.includes('family') && tokens.some((t) => t.startsWith('light')) && lower.includes('family') && /light/.test(lower)) score += 4;
   return score;
 }
 
@@ -115,7 +102,7 @@ Rules:
 - ONLY use product names copied exactly from the catalog (character-for-character).
 - Infer quantities from the text; default quantity is 1.
 - When the customer mentions multiple products, return multiple line items.
-- Understand informal descriptions (e.g. "cub pres" → Cub Prestige, "spa boy" → SpaBoy).
+- Understand informal descriptions (e.g. "widget pro" → Widget Pro - Premium, "inst" → Installation).
 - Never invent products that are not in the catalog.
 - Respond with JSON only, no markdown.`;
 

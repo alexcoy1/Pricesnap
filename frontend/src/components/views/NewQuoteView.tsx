@@ -147,7 +147,7 @@ export const NewQuoteView: React.FC<Props> = ({
           className="form-textarea"
           value={userInputText}
           onChange={(e) => onUserInputChange(e.target.value)}
-          placeholder="e.g. cub sig, spaboy, spaboy starter — or product name with add-ons and delivery"
+          placeholder="e.g. premium widget, installation, and 3-year warranty"
           rows={4}
         />
         <button

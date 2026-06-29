@@ -889,11 +889,9 @@ All prices are in CAD.`;
       case AppView.SETTINGS:
         return (
           <SettingsView
-            companyInfo={companyInfo}
-            onUpdateCompanyInfo={setCompanyInfo}
             defaultTerms={defaultTerms}
             onUpdateDefaultTerms={setDefaultTerms}
-            currentUser={currentUser}
+            currentUser={currentUser!}
             onUpdateUser={(data) => updateProfileInAuthContext(data)}
             anthropicApiKey={anthropicApiKey}
             onUpdateAnthropicApiKey={setAnthropicApiKey}
@@ -1030,7 +1028,7 @@ All prices are in CAD.`;
         currentView={currentView}
         onNavigate={handleSetView}
         onLogout={() => setShowLogoutConfirmation(true)}
-        userName={currentUser.displayName}
+        userName={currentUser?.displayName ?? 'User'}
       />
       <div className="app-main">
         <div className="content-area">

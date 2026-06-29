@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { PriceListItem, ManagedPriceListInfo, Customer } from '../../types';
+import { PriceListItem, ManagedPriceListInfo, Customer } from '../types';
 
 const QUICK_BUNDLES = [
   { label: 'Summit + Cover', text: 'summit signature with grey cover' },

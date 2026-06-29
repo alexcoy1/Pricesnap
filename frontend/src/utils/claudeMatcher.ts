@@ -1,5 +1,4 @@
 import { IdentifiedItem, PriceListItem } from '../types';
-import { matchQuoteItemsAI as matchSemantic } from './semanticMatcher';
 
 function getApiBase(): string {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
@@ -50,6 +49,7 @@ export async function matchQuoteItemsAI(
       throw err;
     }
     console.warn('Server AI unavailable, using local fallback:', err);
+    const { matchQuoteItemsAI: matchSemantic } = await import('./semanticMatcher');
     return matchSemantic(userInput, priceList);
   }
 }

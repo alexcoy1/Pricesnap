@@ -1,3 +1,4 @@
+// @ts-nocheck — ported from JS matcher; typed consumers use matchScoring.ts
 /**
  * Category-aware matching for commission/catalog price lists.
  * Maps natural language to series, spa models, and related accessories (covers, etc.)

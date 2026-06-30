@@ -45,7 +45,10 @@ async function callServerAi(
   });
 
   const rawText = await res.text();
-  let data: { error?: string; details?: string } & ExtractInvoiceResponse = {};
+  let data: { error?: string; details?: string } & ExtractInvoiceResponse = {
+    lines: [],
+    matcher: 'unknown',
+  };
   try {
     data = rawText ? JSON.parse(rawText) : {};
   } catch {

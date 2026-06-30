@@ -4,7 +4,7 @@ PayTrail lives in this repo under `apps/paytrail`. Deploy it as a **separate Net
 
 ## 1. Push to GitHub
 
-From the repo root (`pricesnap`):
+From the repo root (`pricesnap`), or double-click **`apps/paytrail/setup-deploy.bat`**:
 
 ```bash
 git add apps/paytrail .gitignore
@@ -13,6 +13,10 @@ git push origin main
 ```
 
 Repo: [github.com/alexcoy1/Pricesnap](https://github.com/alexcoy1/Pricesnap)
+
+**One-click (Windows):** `apps/paytrail/setup-deploy.bat` — stages PayTrail, commits, pushes, opens Netlify.
+
+**CLI deploy (no GitHub import):** after `netlify login`, run `apps/paytrail/netlify-deploy.bat`.
 
 ## 2. Create a Netlify site
 
